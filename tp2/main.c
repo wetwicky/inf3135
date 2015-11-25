@@ -13,6 +13,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
 
 typedef struct
 {
@@ -28,11 +30,38 @@ void createNewRecipy()
 {
     
 }
+
+void validationNombreDeParametre(int nombreDeParametre, char* fichierExecution)
+{
+    if (nombreDeParametre != 2)
+    {
+        fprintf(stderr, "Usage: %s [nom_du_fichier_d_entree] [nom_du_fichier_de_sortie]\n",fichierExecution);
+        exit(EXIT_FAILURE);
+    }
+}
+
+FILE* ouvertureFichier(char* cheminFichier, char* droitAcces)
+{
+    FILE* fichierAOuvrir = fopen(cheminFichier, droitAcces);
+    if (!fichierAOuvrir)
+    {
+        fprintf( stderr, "Erreur: %s\n", strerror(errno) );
+        exit(EXIT_FAILURE);
+    }
+    return fichierAOuvrir;
+}
+
 /*
  * 
  */
 int main(int argc, char** argv) {
-
+    validationNombreDeParametre(argc, argv[0]);
+    FILE *dataBank = ouvertureFichier(argv[1], "w+");
+    while(!feof(dataBank))
+    {
+        
+    }
+    rewind(dataBank);
     return (EXIT_SUCCESS);
 }
 

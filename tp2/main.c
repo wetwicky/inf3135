@@ -55,13 +55,20 @@ FILE* ouvertureFichier(char* cheminFichier, char* droitAcces)
  * 
  */
 int main(int argc, char** argv) {
+    char lineBuffer[81];
+    char *line_p = lineBuffer;
+    char *nomRecette[81];
+    char *nomCategory[81];
+    
     validationNombreDeParametre(argc, argv[0]);
     FILE *dataBank = ouvertureFichier(argv[1], "w+");
     while(!feof(dataBank))
     {
-        
+        fgets(lineBuffer, 81, dataBank);
+        strchr(line_p,'[');
     }
     rewind(dataBank);
+    fclose(dataBank);
     return (EXIT_SUCCESS);
 }
 

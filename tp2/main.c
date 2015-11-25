@@ -14,6 +14,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct
+{
+    
+}recette_t ;
+
+typedef struct
+{
+    
+}category_t ;
+
+void createNewRecipy()
+{
+    
+}
 /*
  * 
  */

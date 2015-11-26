@@ -19,7 +19,7 @@
 
 typedef enum { false, true } boolean;
 
-typedef struct
+typedef struct recette_s
 {
     char *recette;
     struct recette_s *next;
@@ -60,7 +60,7 @@ void triCategorie(char* category, boolean* estAjoute, category_t** nouvelleCateg
     }
 }
 
-void createNewCategory(category_t *pointerForCategory, recette_t *pointerForRecipy, char *category)
+ category_t* createNewCategory(category_t *pointerForCategory, recette_t *pointerForRecipy, char *category)
 {
     boolean estAjoute = false;
     category_t *nouvelleCategorie;
@@ -127,6 +127,32 @@ char *substring(char *string, int position, int length)
    return pointer;
 }
 
+void freeRecursiveRecette(recette_t *ptr)
+{
+    if (ptr->next != NULL) {
+        freeRecursiveRecette(ptr->next);
+        free(ptr);
+    }
+    else
+    {
+        free(ptr);
+    }
+}
+
+void freeRecursiveCategory(category_t *ptr)
+{
+    if (ptr->next != NULL) {
+        freeRecursiveCategory(ptr->next);
+        freeRecursiveRecette(ptr->recette_t);
+        free(ptr);
+    }
+    else
+    {
+        freeRecursiveRecette(ptr->recette_t);
+        free(ptr);
+    }
+}
+
 /*
  * 
  */
@@ -136,23 +162,23 @@ int main(int argc, char** argv) {
     char *carac_p = lineBuffer;
     char *nomRecette;
     char *nomCategory;
+    recette_t *pointerForRecipy = NULL;
     category_t *pointerForCategory = NULL;
-    int carac = 0;
     int length = 0;
     int position = 0;
     
     validationNombreDeParametre(argc, argv[0]);
     FILE *dataBank = ouvertureFichier(argv[1], "r");
+    fgets(lineBuffer, 120, dataBank);
     while(!feof(dataBank))
     {
-        fgets(lineBuffer, 120, dataBank);
         while(*carac_p != '[')
         {
             length++;
             carac_p++;
         }
         nomRecette = substring(line_p, 0, length-1);
-        
+        pointerForRecipy = createNewRecipy();
         position = length;
         length = 0;
         while(*carac_p != ']')
@@ -161,9 +187,25 @@ int main(int argc, char** argv) {
             carac_p++;
         }
         nomCategory = substring(line_p, position+1, length-1);
-        
+        pointerForCategory = createNewCategory(pointerForCategory, pointerForRecipy, nomCategory);
+        carac_p = carac_p + 2;
+        position = length;
+        length = 0;
+        while(*carac_p != '\0')
+        {
+            pointerForRecipy = createNewRecipy();
+            while(*carac_p != ']')
+            {
+                length++;
+                carac_p++;
+            }
+            nomCategory = substring(line_p, position+1, length-1);
+            pointerForCategory = createNewCategory(pointerForCategory, pointerForRecipy, nomCategory); 
+        }
+        fgets(line_p, 120, dataBank);
     }
-    rewind(dataBank);
+    //rewind(dataBank);
+    freeRecursiveCategory(pointerForCategory);
     fclose(dataBank);
     return (EXIT_SUCCESS);
 }

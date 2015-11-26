@@ -17,6 +17,8 @@
 #include <string.h>
 #include <malloc.h>
 
+typedef enum { false, true } boolean;
+
 typedef struct
 {
     char recette[120];
@@ -30,9 +32,54 @@ typedef struct
     category_t *next;
 }category_t ;
 
-void createNewRecipy()
+recette_t * createNewRecipy()
 {
-    (category_t *)malloc();
+    recette_t *nouvelleRecette;
+    nouvelleRecette = (recette_t *)malloc(sizeof(recette_t));
+    return nouvelleRecette;
+}
+
+void createNewCategory(category_t *pointerForCategory, recette_t pointerForRecipy, char *category)
+{
+    boolean estAjoute = false;
+    category_t *nouvelleCategorie;
+    category_t *pointeur = nouvelleCategorie; 
+    int actualValue = 0;
+    nouvelleCategorie = (category_t *)malloc(sizeof(category_t);
+    nouvelleCategorie->categorie = category;
+    nouvelleCategorie->recette_t = pointerForRecipy;
+    
+    if(pointerForCategory == NULL)
+    {
+        nouvelleCategorie->next = NULL;
+    }
+    else
+    {
+        do
+        {
+            actualValue = strcmp(pointeur->categorie, category);
+            if(actualValue > 0 && nouvelleCategorie->next == NULL)
+            {
+                pointeur->next = nouvelleCategorie;
+                estAjoute = true;
+            }
+            else if (actualValue < 0 )
+            {
+                category_t *temporaire = pointeur->next;
+                pointeur->next = nouvelleCategorie;
+                nouvelleCategorie = temporaire;
+                estAjoute = true;
+            }
+            else if (actualValue == 0)
+            {
+                free(nouvelleCategorie);
+                estAjoute = true;
+            }
+
+            pointeur = pointeur->next;   
+        }
+        while ((pointeur->next != NULL) && (estAjoute == false));
+    }
 }
 
 void validationNombreDeParametre(int nombreDeParametre, char* fichierExecution)
@@ -87,7 +134,7 @@ int main(int argc, char** argv) {
     char line_p = lineBuffer;
     char nomRecette[120];
     char nomCategory[120];
-    category_t *pointerForCategory;
+    category_t *pointerForCategory = NULL;
     int carac = 0;
     int length = 0;
     int position = 0;
@@ -112,6 +159,7 @@ int main(int argc, char** argv) {
             line_p++;
         }
         nomCategory = substring(lineBuffer, position+1, length-1);
+        
     }
     rewind(dataBank);
     fclose(dataBank);

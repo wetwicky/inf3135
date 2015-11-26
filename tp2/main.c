@@ -21,15 +21,15 @@ typedef enum { false, true } boolean;
 
 typedef struct
 {
-    char recette[120];
-    void *next;
+    char *recette;
+    struct recette_s *next;
 }recette_t ;
 
-typedef struct
+typedef struct category_s
 {
-    char categorie[120];
+    char *categorie;
     recette_t *recette_t;
-    category_t *next;
+    struct category_s *next;
 }category_t ;
 
 recette_t * createNewRecipy()
@@ -39,13 +39,34 @@ recette_t * createNewRecipy()
     return nouvelleRecette;
 }
 
-void createNewCategory(category_t *pointerForCategory, recette_t pointerForRecipy, char *category)
+void triCategorie(char* category, boolean* estAjoute, category_t** nouvelleCategorie, category_t* pointeur, int* actualValue){
+    (*actualValue) = strcmp(pointeur->categorie, category);
+    if((*actualValue) > 0 && (*nouvelleCategorie)->next == NULL)
+    {
+        pointeur->next = (*nouvelleCategorie);
+        (*estAjoute) = true;
+    }
+    else if ((*actualValue) < 0 )
+    {
+        category_t *temporaire = pointeur->next;
+        pointeur->next = (*nouvelleCategorie);
+        (*nouvelleCategorie) = temporaire;
+        (*estAjoute) = true;
+    }
+    else if ((*actualValue) == 0)
+    {
+        free((*nouvelleCategorie));
+        (*estAjoute) = true;
+    }
+}
+
+void createNewCategory(category_t *pointerForCategory, recette_t *pointerForRecipy, char *category)
 {
     boolean estAjoute = false;
     category_t *nouvelleCategorie;
     category_t *pointeur = nouvelleCategorie; 
     int actualValue = 0;
-    nouvelleCategorie = (category_t *)malloc(sizeof(category_t);
+    nouvelleCategorie = (category_t *)malloc(sizeof(category_t));
     nouvelleCategorie->categorie = category;
     nouvelleCategorie->recette_t = pointerForRecipy;
     
@@ -55,30 +76,12 @@ void createNewCategory(category_t *pointerForCategory, recette_t pointerForRecip
     }
     else
     {
-        do
+        triCategorie(category, &estAjoute, &nouvelleCategorie, pointeur, &actualValue);
+        while (((estAjoute == false) && pointeur->next != NULL))
         {
-            actualValue = strcmp(pointeur->categorie, category);
-            if(actualValue > 0 && nouvelleCategorie->next == NULL)
-            {
-                pointeur->next = nouvelleCategorie;
-                estAjoute = true;
-            }
-            else if (actualValue < 0 )
-            {
-                category_t *temporaire = pointeur->next;
-                pointeur->next = nouvelleCategorie;
-                nouvelleCategorie = temporaire;
-                estAjoute = true;
-            }
-            else if (actualValue == 0)
-            {
-                free(nouvelleCategorie);
-                estAjoute = true;
-            }
-
+            triCategorie(category, &estAjoute, &nouvelleCategorie, pointeur, &actualValue);
             pointeur = pointeur->next;   
         }
-        while ((pointeur->next != NULL) && (estAjoute == false));
     }
 }
 
@@ -104,15 +107,13 @@ FILE* ouvertureFichier(char* cheminFichier, char* droitAcces)
 
 char *substring(char *string, int position, int length) 
 {
-   char *pointer;
+   char *pointer = malloc(length+1);;
    int c;
- 
-   pointer = malloc(length+1);
  
    if (pointer == NULL)
    {
-      printf("Unable to allocate memory.\n");
-      exit(1);
+      printf("impossibilite d'allouer de la memoire.\n");
+      exit(EXIT_FAILURE);
    }
  
    for (c = 0 ; c < length ; c++)
@@ -131,9 +132,10 @@ char *substring(char *string, int position, int length)
  */
 int main(int argc, char** argv) {
     char lineBuffer[120];
-    char line_p = lineBuffer;
-    char nomRecette[120];
-    char nomCategory[120];
+    char *line_p = lineBuffer;
+    char *carac_p = lineBuffer;
+    char *nomRecette;
+    char *nomCategory;
     category_t *pointerForCategory = NULL;
     int carac = 0;
     int length = 0;
@@ -144,25 +146,24 @@ int main(int argc, char** argv) {
     while(!feof(dataBank))
     {
         fgets(lineBuffer, 120, dataBank);
-        while(line_p != '[')
+        while(*carac_p != '[')
         {
             length++;
-            line_p++;
+            carac_p++;
         }
-        nomRecette = substring(lineBuffer, 0, length-1);
+        nomRecette = substring(line_p, 0, length-1);
         
         position = length;
         length = 0;
-        while(line_p != ']')
+        while(*carac_p != ']')
         {
             length++;
-            line_p++;
+            carac_p++;
         }
-        nomCategory = substring(lineBuffer, position+1, length-1);
+        nomCategory = substring(line_p, position+1, length-1);
         
     }
     rewind(dataBank);
     fclose(dataBank);
     return (EXIT_SUCCESS);
 }
-

@@ -32,15 +32,54 @@ typedef struct category_s
     struct category_s *next;
 }category_t ;
 
-recette_t * createNewRecipy()
+recette_t * createNewRecipy(recette_t *pointerForRecipy, char *nomRecette)
 {
-    recette_t *nouvelleRecette;
+    boolean estAjoute = false;
+    recette_t *nouvelleRecette = pointerForRecipy;
     nouvelleRecette = (recette_t *)malloc(sizeof(recette_t));
-    return nouvelleRecette;
+    recette_t *pointeur = nouvelleRecette; 
+    int actualValue = 0;
+    nouvelleRecette = (recette_t *)malloc(sizeof(recette_t));
+    nouvelleRecette->recette = nomRecette;
+    
+    if(pointerForRecipy == NULL)
+    {
+        nouvelleRecette->next = NULL;
+    }
+    else
+    {
+        triCategorie(nomRecette, &estAjoute, &nouvelleRecette, pointeur, &actualValue);
+        while (((estAjoute == false) && pointeur->next != NULL))
+        {
+            triRecette(nomRecette, &estAjoute, &nouvelleRecette, pointeur, &actualValue);
+            pointeur = pointeur->next;   
+        }
+    }
 }
 
-void triCategorie(char* category, boolean* estAjoute, category_t** nouvelleCategorie, category_t* pointeur, int* actualValue){
-    (*actualValue) = strcmp(pointeur->categorie, category);
+void triRecette(char* nomRecette, boolean* estAjoute, recette_t** nouvelleRecette, recette_t* pointeur, int* actualValue){
+    (*actualValue) = strcmp(pointeur->recette, nomRecette);
+    if((*actualValue) > 0 && (*nouvelleRecette)->next == NULL)
+    {
+        pointeur->next = (*nouvelleRecette);
+        (*estAjoute) = true;
+    }
+    else if ((*actualValue) < 0 )
+    {
+        recette_t *temporaire = pointeur->next;
+        pointeur->next = (*nouvelleRecette);
+        (*nouvelleRecette) = temporaire;
+        (*estAjoute) = true;
+    }
+    else if ((*actualValue) == 0)
+    {
+        free((*nouvelleRecette));
+        (*estAjoute) = true;
+    }
+}
+
+void triCategorie(char* nomCategory, boolean* estAjoute, category_t** nouvelleCategorie, category_t* pointeur, int* actualValue){
+    (*actualValue) = strcmp(pointeur->categorie, nomCategory);
     if((*actualValue) > 0 && (*nouvelleCategorie)->next == NULL)
     {
         pointeur->next = (*nouvelleCategorie);
@@ -60,14 +99,14 @@ void triCategorie(char* category, boolean* estAjoute, category_t** nouvelleCateg
     }
 }
 
- category_t* createNewCategory(category_t *pointerForCategory, recette_t *pointerForRecipy, char *category)
+ category_t* createNewCategory(category_t *pointerForCategory, recette_t *pointerForRecipy, char *nomCategory)
 {
     boolean estAjoute = false;
     category_t *nouvelleCategorie;
     category_t *pointeur = nouvelleCategorie; 
     int actualValue = 0;
     nouvelleCategorie = (category_t *)malloc(sizeof(category_t));
-    nouvelleCategorie->categorie = category;
+    nouvelleCategorie->categorie = nomCategory;
     nouvelleCategorie->recette_t = pointerForRecipy;
     
     if(pointerForCategory == NULL)
@@ -76,13 +115,14 @@ void triCategorie(char* category, boolean* estAjoute, category_t** nouvelleCateg
     }
     else
     {
-        triCategorie(category, &estAjoute, &nouvelleCategorie, pointeur, &actualValue);
+        triCategorie(nomCategory, &estAjoute, &nouvelleCategorie, pointeur, &actualValue);
         while (((estAjoute == false) && pointeur->next != NULL))
         {
-            triCategorie(category, &estAjoute, &nouvelleCategorie, pointeur, &actualValue);
+            triCategorie(nomCategory, &estAjoute, &nouvelleCategorie, pointeur, &actualValue);
             pointeur = pointeur->next;   
         }
     }
+    return nouvelleCategorie;
 }
 
 void validationNombreDeParametre(int nombreDeParametre, char* fichierExecution)
@@ -153,6 +193,14 @@ void freeRecursiveCategory(category_t *ptr)
     }
 }
 
+void lengthIncremention(char** carac_p, int* length, char c){
+    while(*(*carac_p) != c)
+    {
+        (*length)++;
+        (*carac_p)++;
+    }
+}
+
 /*
  * 
  */
@@ -172,20 +220,12 @@ int main(int argc, char** argv) {
     fgets(lineBuffer, 120, dataBank);
     while(!feof(dataBank))
     {
-        while(*carac_p != '[')
-        {
-            length++;
-            carac_p++;
-        }
+        lengthIncremention(&carac_p, &length, '[');
         nomRecette = substring(line_p, 0, length-1);
-        pointerForRecipy = createNewRecipy();
+        pointerForRecipy = createNewRecipy(pointerForRecipy, nomRecette);
         position = length;
         length = 0;
-        while(*carac_p != ']')
-        {
-            length++;
-            carac_p++;
-        }
+        lengthIncremention(&carac_p, &length, ']');
         nomCategory = substring(line_p, position+1, length-1);
         pointerForCategory = createNewCategory(pointerForCategory, pointerForRecipy, nomCategory);
         carac_p = carac_p + 2;
@@ -193,12 +233,8 @@ int main(int argc, char** argv) {
         length = 0;
         while(*carac_p != '\0')
         {
-            pointerForRecipy = createNewRecipy();
-            while(*carac_p != ']')
-            {
-                length++;
-                carac_p++;
-            }
+            pointerForRecipy = createNewRecipy(pointerForRecipy, nomRecette);
+            lengthIncremention(&carac_p, &length, ']');
             nomCategory = substring(line_p, position+1, length-1);
             pointerForCategory = createNewCategory(pointerForCategory, pointerForRecipy, nomCategory); 
         }

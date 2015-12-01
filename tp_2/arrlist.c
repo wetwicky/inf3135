@@ -39,54 +39,62 @@ insertInCategoryList (category_t *headOfCategory, category_t *categoryToAdd)
   boolean estAjoute = FAUX;
   category_t *pointeur = headOfCategory = NULL;
   int valueOfStrcmp = 0;
-
-  if (headOfCategory == NULL)
+  if (categoryToAdd == NULL)
     {
-      headOfCategory = categoryToAdd;
+      fprintf (stderr, "le pointeur vers la liste de categorie que vous voulez n'existe pas.\n");
+      exit (EXIT_FAILURE);
     }
   else
     {
-      valueOfStrcmp = strcasecmp (categoryToAdd->categorieName, pointeur->categorieName);
-      if (valueOfStrcmp == 0)
-        {//cas où la categorie existe déja
-          insertInRecipyList (categoryToAdd->recette_t, pointeur);
-          free (categoryToAdd);
-          estAjoute = VRAI;
-        }
-      else if (valueOfStrcmp < 0)
-        {// nouvelle tête
-          categoryToAdd->next = pointeur;
-          estAjoute = VRAI;
-        }
-      else if (valueOfStrcmp > 0 && pointeur->next == NULL)
-        {//2e position
-          pointeur->next = categoryToAdd;
-          estAjoute = VRAI;
-        }
-      else//avec plusieur valeurs
+      if (headOfCategory == NULL)
         {
-          while (estAjoute == FAUX && pointeur->next != NULL)
+          headOfCategory = categoryToAdd;
+        }
+      else
+        {
+          valueOfStrcmp = strcasecmp (categoryToAdd->categorieName, pointeur->categorieName);
+          if (valueOfStrcmp == 0)
+            {//cas où la categorie existe déja
+              insertInRecipyList (categoryToAdd->recette_t, pointeur);
+              free (categoryToAdd);
+              estAjoute = VRAI;
+            }
+          else if (valueOfStrcmp < 0)
+            {// nouvelle tête
+              categoryToAdd->next = pointeur;
+              estAjoute = VRAI;
+            }
+          else if (valueOfStrcmp > 0 && pointeur->next == NULL)
+            {//2e position
+              pointeur->next = categoryToAdd;
+              estAjoute = VRAI;
+            }
+          else//avec plusieur valeurs
             {
-              valueOfStrcmp = strcasecmp (categoryToAdd->categorieName, pointeur->next->categorieName);
-              if (valueOfStrcmp == 0)
-                {//cas identique
-                  free (categoryToAdd);
-                  estAjoute = VRAI;
+              while (estAjoute == FAUX && pointeur->next != NULL)
+                {
+                  valueOfStrcmp = strcasecmp (categoryToAdd->categorieName, pointeur->next->categorieName);
+                  if (valueOfStrcmp == 0)
+                    {//cas identique
+                      free (categoryToAdd);
+                      estAjoute = VRAI;
+                    }
+                  else if (valueOfStrcmp < 0)
+                    {//entre deux
+                      categoryToAdd->next = pointeur;
+                      estAjoute = VRAI;
+                    }
+                  else if (valueOfStrcmp > 0 && pointeur->next == NULL)
+                    {//en dernier
+                      pointeur->next = categoryToAdd;
+                      estAjoute = VRAI;
+                    }
+                  pointeur = pointeur->next;
                 }
-              else if (valueOfStrcmp < 0)
-                {//entre deux
-                  categoryToAdd->next = pointeur;
-                  estAjoute = VRAI;
-                }
-              else if (valueOfStrcmp > 0 && pointeur->next == NULL)
-                {//en dernier
-                  pointeur->next = categoryToAdd;
-                  estAjoute = VRAI;
-                }
-              pointeur = pointeur->next;
             }
         }
     }
+
   return EXIT_SUCCESS;
 }
 
@@ -95,87 +103,116 @@ insertInRecipyList (recette_t *recipyToAdd, category_t *categoryOfRecipy)
 {
   boolean estAjoute = FAUX;
   recette_t *pointeur = categoryOfRecipy->recette_t;
-  char *nomRecette = recipyToAdd->recipyName;
-  int valueOfStrcmp = strcasecmp (nomRecette, categoryOfRecipy->recette_t->recipyName);
-  if (valueOfStrcmp == 0)
-    {
-      estAjoute = VRAI;
+  int valueOfcmp = strcasecmp (recipyToAdd->recipyName, categoryOfRecipy->recette_t->recipyName);
+  if (valueOfcmp == 0)
+    { //recette deja presente
+      fprintf (stderr, "la recette %s possede des doublons.\n", recipyToAdd->recipyName);
+      exit (EXIT_FAILURE);
     }
-  else if (valueOfStrcmp < 0)
+  else if (valueOfcmp < 0)
     {
       recipyToAdd->next = pointeur;
       categoryOfRecipy->recette_t = recipyToAdd;
       estAjoute = VRAI;
     }
-  else if (valueOfStrcmp > 0 && pointeur->next == NULL)
+  else
     {
-      pointeur->next = recipyToAdd;
-      estAjoute = VRAI;
+      while (estAjoute == FAUX && pointeur->next != NULL)
+        {
+          valueOfcmp = strcasecmp (recipyToAdd->recipyName, pointeur->next->recipyName);
+          if (valueOfcmp == 0)
+            { //recette deja presente
+              fprintf (stderr, "la recette %s possede des doublons.\n", recipyToAdd->recipyName);
+              exit (EXIT_FAILURE);
+            }
+          else if (valueOfcmp < 0)
+            {
+              recette_t *tmp = pointeur->next;
+              pointeur->next = recipyToAdd;
+              recipyToAdd->next = tmp;
+              categoryOfRecipy->recette_t = recipyToAdd;
+              estAjoute = VRAI;
+            }
+          else
+            {
+              pointeur = pointeur->next;
+            }
+        }
+      if (valueOfcmp > 0 && pointeur->next == NULL)
+        {
+          pointeur->next = recipyToAdd;
+          estAjoute = VRAI;
+        }
+    }
+  return EXIT_SUCCESS;
+}
+
+int
+findCategory (category_t *pointeurToReturn, category_t* headOfCategory, char* categorywanted)
+{
+  pointeurToReturn = headOfCategory;
+  boolean finded = FAUX;
+  if (pointeurToReturn == NULL)
+    {
+      fprintf (stderr, "le pointeur vers la liste de recette que vous voulez n'existe pas.\n");
+      exit (EXIT_FAILURE);
     }
   else
     {
-      while (estAjoute == FAUX && categoryOfRecipy->recette_t->next != NULL)
+      while (finded == FAUX && pointeurToReturn != NULL)
         {
-
+          if (pointeurToReturn->categorieName == categorywanted)
+            {
+              finded = VRAI;
+            }
+          else
+            {
+              pointeurToReturn = pointeurToReturn->next;
+            }
         }
     }
+  return EXIT_SUCCESS;
+}
 
-  category_t * findCategory (category_t* headOfCategory, char* categorywanted)
-  {
-    category_t* pointeur = headOfCategory;
-    boolean finded = FAUX;
-    while (finded == FAUX && pointeur != NULL)
-      {
-        if (pointeur->categorieName == categorywanted)
-          {
-            finded = VRAI;
-          }
-        else
-          {
-            pointeur = pointeur->next;
-          }
-      }
-    return pointeur;
-  }
+int
+printAllRecipyOfACategory (category_t * theCategory)
+{
+  recette_t* pointeur = theCategory->recette_t;
+  if (pointeur == NULL)
+    {
+      fprintf (stderr, "le pointeur vers la liste de recette que vous voulez n'existe pas.\n");
+      exit (EXIT_FAILURE);
+    }
+  else
+    {
+      while (pointeur != NULL)
+        {
+          fprintf (stdout, "%s", pointeur->recipyName);
+          pointeur = pointeur->next;
+        }
+    }
+  return EXIT_SUCCESS;
+}
 
-  int printAllRecipyOfACategory (category_t * theCategory)
-  {
-    recette_t* pointeur = theCategory->recette_t;
-    if (pointeur == NULL)
-      {
-        fprintf (stderr, "le pointeur vers la liste de recette que vous voulez n'existe pas.\n");
-        exit (EXIT_FAILURE);
-      }
-    else
-      {
-        while (pointeur != NULL)
-          {
-            fprintf (stdout, "%s", pointeur->recipyName);
-            pointeur = pointeur->next;
-          }
-      }
-    return EXIT_SUCCESS;
-  }
-
-  int SelectRecipyByKeyWordInACategory (category_t* headOfCategory, char* keyWord)
-  {
-    recette_t* pointeur = headOfCategory->recette_t;
-    if (pointeur == NULL)
-      {
-        fprintf (stderr, "le pointeur vers la liste de recette que vous voulez n'existe pas.\n");
-        exit (EXIT_FAILURE);
-      }
-    else
-      {
-        while (pointeur != NULL)
-          {
-            if (strstr (pointeur->recipyName, keyWord) != NULL)
-              {
-                fprintf (stdout, "%s\n", pointeur->recipyName);
-              }
-            pointeur = pointeur->next;
-          }
-      }
-  }
+int
+SelectRecipyByKeyWordInACategory (category_t* headOfCategory, char* keyWord)
+{
+  recette_t* pointeur = headOfCategory->recette_t;
+  if (pointeur == NULL)
+    {
+      fprintf (stderr, "le pointeur vers la liste de recette que vous voulez n'existe pas.\n");
+      exit (EXIT_FAILURE);
+    }
+  else
+    {
+      while (pointeur != NULL)
+        {
+          if (strstr (pointeur->recipyName, keyWord) != NULL)
+            {
+              fprintf (stdout, "%s\n", pointeur->recipyName);
+            }
+          pointeur = pointeur->next;
+        }
+    }
   return EXIT_SUCCESS;
 }

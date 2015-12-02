@@ -51,7 +51,7 @@ substring (char *string, int position, int length)
 
   if (pointer == NULL)
     {
-      printf ("impossibilite d'allouer de la memoire.\n");
+      fprintf (stderr, "impossibilite d'allouer de la memoire.\n");
       exit (EXIT_FAILURE);
     }
 
@@ -94,8 +94,7 @@ main (int argc, char** argv)
           length++;
           carac_p++;
         }
-      nomRecette = substring (line_p, 0, length - 1);
-      pointerForRecipy = createNewRecipy (nomRecette);
+      pointerForRecipy = createNewRecipy (substring (line_p, 0, length - 1));
       while (carac_p != NULL)
         {
           categoryStart = length + 1;

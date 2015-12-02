@@ -42,30 +42,6 @@ ouvertureFichier (FILE* fichierAOuvrir, char* cheminFichier, char* droitAcces)
   return EXIT_SUCCESS;
 }
 
-char *
-substring (char *string, int position, int length)
-{
-  char *pointer = malloc (length + 1);
-  ;
-  int c;
-
-  if (pointer == NULL)
-    {
-      fprintf (stderr, "impossibilite d'allouer de la memoire.\n");
-      exit (EXIT_FAILURE);
-    }
-
-  for (c = 0; c < length; c++)
-    {
-      *(pointer + c) = *(string + position - 1);
-      string++;
-    }
-
-  *(pointer + c) = '\0';
-
-  return pointer;
-}
-
 /*
  * 
  */

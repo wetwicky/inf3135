@@ -17,7 +17,15 @@ category_t* createNewCategory (category_t*, recette_t*, char*);
  */
 void insertInRecipyList(recette_t*, category_t*);
 
+/*
+ Print out all the recipies from a category.
+ */
+int printAllRecipyOfACategory (category_t * theCategory);
 
+/*
+ Print out the recipies containing the keyword.
+ */
+int printRecipiesByKeyWordInACategory (category_t* headOfCategory, char* keyWord);
 
 #endif /* ARRLIST_H */
 

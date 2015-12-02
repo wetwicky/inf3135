@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "boolean.h"
+#include "assert.h"
 
 typedef struct recette_s
 {
@@ -16,18 +17,20 @@ typedef struct category_s
   struct category_s *next;
 } category_t;
 
-recette_t*
-createNewRecipy (char* nomRecette)
+int
+createNewRecipy (recette_t *pointerForRecipy, char* nomRecette)
 {
   recette_t *nouvelleRecette = (recette_t *) malloc (sizeof (recette_t));
+  assert(nouvelleRecette != NULL && "Erreur d'allocation de memoire");
   nouvelleRecette->recipyName = nomRecette;
-  return nouvelleRecette;
+  return EXIT_SUCCESS;
 }
 
 category_t*
 createNewCategory (char *nomCategory, recette_t *firstRecipy)
 {
   category_t *nouvelleCategorie = (category_t *) malloc (sizeof (category_t));
+  assert(nouvelleCategorie!= NULL && "Erreur d'allocation de memoire");
   nouvelleCategorie->categorieName = nomCategory;
   nouvelleCategorie->recette_t = firstRecipy;
   return nouvelleCategorie;

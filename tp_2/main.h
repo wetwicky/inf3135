@@ -16,6 +16,5 @@
 
 int validationNombreDeParametre (int, char*);
 int ouvertureFichier (FILE*, char*, char*);
-char* substring (char *, int, int);
 #endif /* MAIN_H */
 

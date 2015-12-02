@@ -74,7 +74,6 @@ main (int argc, char** argv)
 {
   char lineBuffer[120];
   char *line_p = lineBuffer;
-  char *carac_p = lineBuffer;
   char *nomRecette;
   char *nomCategory;
   category_t *pointerForCategory = NULL;
@@ -89,28 +88,13 @@ main (int argc, char** argv)
   while (!feof (dataBank))
     {
       fgets (lineBuffer, 120, dataBank);
-      while (*carac_p != '[')
+      nomRecette = strtok(lineBuffer, "[");
+      createNewRecipy (pointerForRecipy, nomRecette);
+      while(line_p != NULL)
         {
-          length++;
-          carac_p++;
+          nomCategory = strtok(NULL,"[]");
+          createNewCategory (pointerForCategory, pointerForRecipy, nomCategory); //peut passer un pointeur NULL
         }
-      pointerForRecipy = createNewRecipy (substring (line_p, 0, length - 1));
-      while (carac_p != NULL)
-        {
-          categoryStart = length + 1;
-          length = 0;
-          while (*carac_p != ']' && carac_p != NULL)
-            {
-              length++;
-              carac_p++;
-            }
-          if(*carac_p == ']')
-            {
-              nomCategory = substring (line_p, categoryStart, length - 1);
-              createNewCategory (pointerForCategory, pointerForRecipy, nomCategory); //peut passer un pointeur NULL
-            }
-        }
-
     }
   //rewind(dataBank);
   fclose (dataBank);

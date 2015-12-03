@@ -30,16 +30,17 @@ validationNombreDeParametre (int nombreDeParametre, char* fichierExecution)
   return EXIT_SUCCESS;
 }
 
-int
-ouvertureFichier (FILE* fichierAOuvrir, char* cheminFichier, char* droitAcces)
+FILE*
+ouvertureFichier (char* cheminFichier, char* droitAcces)
 {
-  fichierAOuvrir = fopen (cheminFichier, droitAcces);
+  FILE* fichierAOuvrir = fopen (cheminFichier, droitAcces);
+  printf("%p", fichierAOuvrir);
   if (!fichierAOuvrir)
     {
       fprintf (stderr, "Erreur: %s\n", strerror (errno));
       exit (EXIT_FAILURE);
     }
-  return EXIT_SUCCESS;
+  return fichierAOuvrir;
 }
 
 /*
@@ -48,27 +49,31 @@ ouvertureFichier (FILE* fichierAOuvrir, char* cheminFichier, char* droitAcces)
 int
 main (int argc, char** argv)
 {
-  char lineBuffer[120];
-  char *line_p = lineBuffer;
-  char *nomRecette;
-  char *nomCategory;
+  char lineBuffer[120] = {0};
+  char lineBuffer2[120] = "BOnjour";
+  char *nomRecette = NULL;
+  char *nomCategory = NULL;
   category_t *pointerForCategory = NULL;
   recette_t *pointerForRecipy = NULL;
-  int carac = 0;
-  int length = 0;
-  int categoryStart = 0;
 
   validationNombreDeParametre (argc, argv[0]);
-  FILE *dataBank = NULL;
-  ouvertureFichier (dataBank, argv[1], "r");
-  while (!feof (dataBank))
+  FILE *dataBank = ouvertureFichier (argv[1], "r");
+  printf ("%s", argv[1]);
+   printf ("%p", dataBank);
+  while (feof (dataBank) != EOF)
     {
       fgets (lineBuffer, 120, dataBank);
-      nomRecette = strtok(lineBuffer, "[");
+      printf ("%s", lineBuffer);
+      nomRecette = strtok (lineBuffer, "[");
+      printf ("%s", nomRecette);
       createNewRecipy (pointerForRecipy, nomRecette);
-      while(line_p != NULL)
+      nomCategory = strtok (NULL, "[]");
+      printf ("%s", nomCategory);
+      createNewCategory (pointerForCategory, pointerForRecipy, nomCategory); //peut passer un pointeur NULL
+      while (nomCategory != NULL)
         {
-          nomCategory = strtok(NULL,"[]");
+          nomCategory = strtok (NULL, "[]");
+          printf ("%s\n", nomCategory);
           createNewCategory (pointerForCategory, pointerForRecipy, nomCategory); //peut passer un pointeur NULL
         }
     }

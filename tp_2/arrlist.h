@@ -27,5 +27,9 @@ int printAllRecipyOfACategory (category_t**);
  */
 int printRecipiesByKeyWordInACategory (category_t**, char*);
 
+int releaseRecipyAllocation(recette_t**);
+
+int releaseCategoryAllocation(category_t**);
+
 #endif /* ARRLIST_H */
 

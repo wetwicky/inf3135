@@ -52,8 +52,9 @@ main (int argc, char** argv)
   char lineBuffer[120] = {0};
   char *nomRecette = NULL;
   char *nomCategory = NULL;
-  category_t *pointerForCategory = NULL;
-  recette_t *pointerForRecipy = NULL;
+  category_t *categoryToAdd = NULL;
+  recette_t *recipyToAdd = NULL;
+  category_t *headOfCategory = NULL;
   FILE *dataBank = NULL;
 
   validationNombreDeParametre (argc, argv[0]);
@@ -66,20 +67,22 @@ main (int argc, char** argv)
       printf ("%s", lineBuffer);
       nomRecette = strtok (lineBuffer, "[");
       printf ("%s", nomRecette);
-      createNewRecipy (&pointerForRecipy, nomRecette);
+      createNewRecipy (&recipyToAdd, nomRecette);
       nomCategory = strtok (NULL, "[]");
       printf ("%s", nomCategory);
-      createNewCategory (&pointerForCategory, &pointerForRecipy, nomCategory); //peut passer un pointeur NULL
+      createNewCategory (&categoryToAdd, &recipyToAdd, nomCategory); //peut passer un pointeur NULL
       while (nomCategory != NULL)
         {
           nomCategory = strtok (NULL, "[]");
           if(!(nomCategory == NULL || strcmp(nomCategory, " ") == 0 || strcmp(nomCategory, "\r\n") == 0))
             {
               printf ("%s\n", nomCategory);
-              createNewCategory (&pointerForCategory, &pointerForRecipy, nomCategory); //peut passer un pointeur NULL
+              createNewCategory (&categoryToAdd, &recipyToAdd, nomCategory); //peut passer un pointeur NULL
+              insertInCategoryList (&headOfCategory, &categoryToAdd);
             }
         }
     }
+  releaseCategoryAllocation (&headOfCategory);
   //rewind(dataBank);
   fclose (dataBank);
   return (EXIT_SUCCESS);

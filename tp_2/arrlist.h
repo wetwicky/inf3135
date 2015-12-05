@@ -15,7 +15,7 @@ category_t* createNewCategory (category_t**, recette_t**, char*);
 /*
  Put a recipy in an arrayList
  */
-void insertInRecipyList(recette_t**, category_t**);
+int insertInRecipyList(recette_t**, category_t**);
 
 /*
  Print out all the recipies from a category.

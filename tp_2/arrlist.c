@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 #include "boolean.h"
 #include "assert.h"
 
@@ -207,7 +208,7 @@ printAllRecipyOfACategory (category_t * theCategory)
 }
 
 int
-SelectRecipyByKeyWordInACategory (category_t* headOfCategory, char* keyWord)
+selectRecipyByKeyWordInACategory (category_t* headOfCategory, char* keyWord)
 {
   recette_t* pointeur = headOfCategory->recette_t;
   if (pointeur == NULL)
@@ -228,3 +229,53 @@ SelectRecipyByKeyWordInACategory (category_t* headOfCategory, char* keyWord)
     }
   return EXIT_SUCCESS;
 }
+
+int releaseRecipyAllocation(recette_t **headOfRecipy)
+{
+  if(*headOfRecipy == NULL)
+    {
+      fprintf (stderr, "le pointeur vers la liste de recette que vous voulez n'existe pas.\n");
+      exit (EXIT_FAILURE);
+    }
+  else
+    {
+      if((*headOfRecipy)->next == NULL) 
+        {
+          printf("recette libere = %s", (*headOfRecipy)->recipyName);
+          free(*headOfRecipy);
+        }
+      else
+        {
+          releaseRecipyAllocation (&(*headOfRecipy)->next);
+          printf("recette libere = %s", (*headOfRecipy)->recipyName);
+          free(*headOfRecipy);
+        }
+    }
+  return EXIT_SUCCESS;
+}
+
+int releaseCategoryAllocation(category_t ** headOfCategory)
+{
+  if(*headOfCategory == NULL)
+    {
+      fprintf (stderr, "le pointeur vers la liste de recette que vous voulez n'existe pas.\n");
+      exit (EXIT_FAILURE);
+    }
+  else
+    {
+      if((*headOfCategory)->next == NULL) 
+        {
+          releaseRecipyAllocation (&(*headOfCategory)->recette_t);
+          printf("category libere = %s", (*headOfCategory)->categorieName);
+          free(*headOfCategory);
+        }
+      else
+        {
+          releaseCategoryAllocation (&(*headOfCategory)->next);
+          releaseRecipyAllocation (&(*headOfCategory)->recette_t);
+          printf("category libere = %s", (*headOfCategory)->categorieName);
+          free(*headOfCategory);
+        }
+    }
+}
+

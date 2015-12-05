@@ -18,11 +18,11 @@ typedef struct category_s
 } category_t;
 
 int
-createNewRecipy (recette_t *pointerForRecipy, char* nomRecette)
+createNewRecipy (recette_t **pointerForRecipy, char* nomRecette)
 {
-  recette_t *nouvelleRecette = (recette_t *) malloc (sizeof (recette_t));
-  assert(nouvelleRecette != NULL && "Erreur d'allocation de memoire");
-  nouvelleRecette->recipyName = nomRecette;
+  *pointerForRecipy = (recette_t *) malloc (sizeof (recette_t));
+  assert(pointerForRecipy != NULL && "Erreur d'allocation de memoire");
+  (*pointerForRecipy)->recipyName = nomRecette;
   return EXIT_SUCCESS;
 }
 

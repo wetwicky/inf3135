@@ -50,7 +50,6 @@ int
 main (int argc, char** argv)
 {
   char lineBuffer[120] = {0};
-  char lineBuffer2[120] = "BOnjour";
   char *nomRecette = NULL;
   char *nomCategory = NULL;
   category_t *pointerForCategory = NULL;
@@ -73,6 +72,7 @@ main (int argc, char** argv)
       createNewCategory (&pointerForCategory, &pointerForRecipy, nomCategory); //peut passer un pointeur NULL
       while (nomCategory != NULL)
         {
+          strtok (NULL, "[]\n");
           nomCategory = strtok (NULL, "[]");
           printf ("%s\n", nomCategory);
           createNewCategory (&pointerForCategory, &pointerForRecipy, nomCategory); //peut passer un pointeur NULL

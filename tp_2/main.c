@@ -82,6 +82,7 @@ main (int argc, char** argv)
             }
         }
     }
+  printf("veuillez choisir le type de recherche que vous voulez:\n  ");
   releaseCategoryAllocation (&headOfCategory);
   //rewind(dataBank);
   fclose (dataBank);

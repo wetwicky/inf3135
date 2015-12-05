@@ -30,17 +30,17 @@ validationNombreDeParametre (int nombreDeParametre, char* fichierExecution)
   return EXIT_SUCCESS;
 }
 
-FILE*
-ouvertureFichier (char* cheminFichier, char* droitAcces)
+int
+ouvertureFichier (FILE **fichierAOuvrir, char* cheminFichier, char* droitAcces)
 {
-  FILE* fichierAOuvrir = fopen (cheminFichier, droitAcces);
+  *fichierAOuvrir = fopen (cheminFichier, droitAcces);
   printf("%p", fichierAOuvrir);
   if (!fichierAOuvrir)
     {
       fprintf (stderr, "Erreur: %s\n", strerror (errno));
       exit (EXIT_FAILURE);
     }
-  return fichierAOuvrir;
+  return EXIT_SUCCESS;
 }
 
 /*
@@ -55,26 +55,27 @@ main (int argc, char** argv)
   char *nomCategory = NULL;
   category_t *pointerForCategory = NULL;
   recette_t *pointerForRecipy = NULL;
-
+  FILE *dataBank = NULL;
+  
   validationNombreDeParametre (argc, argv[0]);
-  FILE *dataBank = ouvertureFichier (argv[1], "r");
+  ouvertureFichier (&dataBank, argv[1], "r");
   printf ("%s", argv[1]);
-   printf ("%p", dataBank);
+  printf ("%p", dataBank);
   while (feof (dataBank) != EOF)
     {
       fgets (lineBuffer, 120, dataBank);
       printf ("%s", lineBuffer);
       nomRecette = strtok (lineBuffer, "[");
       printf ("%s", nomRecette);
-      createNewRecipy (pointerForRecipy, nomRecette);
+      createNewRecipy (&pointerForRecipy, nomRecette);
       nomCategory = strtok (NULL, "[]");
       printf ("%s", nomCategory);
-      createNewCategory (pointerForCategory, pointerForRecipy, nomCategory); //peut passer un pointeur NULL
+      createNewCategory (&pointerForCategory, &pointerForRecipy, nomCategory); //peut passer un pointeur NULL
       while (nomCategory != NULL)
         {
           nomCategory = strtok (NULL, "[]");
           printf ("%s\n", nomCategory);
-          createNewCategory (pointerForCategory, pointerForRecipy, nomCategory); //peut passer un pointeur NULL
+          createNewCategory (&pointerForCategory, &pointerForRecipy, nomCategory); //peut passer un pointeur NULL
         }
     }
   //rewind(dataBank);

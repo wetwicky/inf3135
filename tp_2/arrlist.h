@@ -1,7 +1,19 @@
 #ifndef ARRLIST_H
 #define ARRLIST_H
-typedef struct recette_s {} recette_t;
-typedef struct category_s {} category_t;
+
+typedef struct recette_s
+{
+  char *recipyName;
+  struct recette_s *next;
+} recette_t;
+
+typedef struct category_s
+{
+  char *categorieName;
+  recette_t *recette_t;
+  struct category_s *next;
+} category_t;
+
 /*
  Allocate memory for a new recipy
  */

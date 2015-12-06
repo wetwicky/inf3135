@@ -34,7 +34,6 @@ int
 ouvertureFichier (FILE **fichierAOuvrir, char* cheminFichier, char* droitAcces)
 {
   *fichierAOuvrir = fopen (cheminFichier, droitAcces);
-  printf ("%p", fichierAOuvrir);
   if (!fichierAOuvrir)
     {
       fprintf (stderr, "Erreur: %s\n", strerror (errno));
@@ -50,6 +49,10 @@ int
 main (int argc, char** argv)
 {
   char lineBuffer[120] = {0};
+  char recherche[120] = {0};
+  char *rechercheCategory = NULL;
+  char *rechercheKeyWord = NULL;
+  char *rechercheOtherWord = NULL;
   char *nomRecette = NULL;
   char *nomCategory = NULL;
   category_t *categoryToAdd = NULL;
@@ -59,30 +62,56 @@ main (int argc, char** argv)
 
   validationNombreDeParametre (argc, argv[0]);
   ouvertureFichier (&dataBank, argv[1], "r");
-  printf ("%s", argv[1]);
-  printf ("%p", dataBank);
   while (!feof (dataBank))
     {
       fgets (lineBuffer, 120, dataBank);
-      printf ("%s", lineBuffer);
       nomRecette = strtok (lineBuffer, "[");
-      printf ("%s", nomRecette);
       createNewRecipy (&recipyToAdd, nomRecette);
+      printf("recipyToAdd->recipyName = %s", recipyToAdd->recipyName);
       nomCategory = strtok (NULL, "[]");
-      printf ("%s", nomCategory);
+      printf ("nomCategory = %s\n", nomCategory);
       createNewCategory (&categoryToAdd, &recipyToAdd, nomCategory); //peut passer un pointeur NULL
+      insertInCategoryList (&headOfCategory, &categoryToAdd);
       while (nomCategory != NULL)
         {
           nomCategory = strtok (NULL, "[]");
+          printf ("nomCategory = %s\n", nomCategory);
           if(!(nomCategory == NULL || strcmp(nomCategory, " ") == 0 || strcmp(nomCategory, "\r\n") == 0))
             {
-              printf ("%s\n", nomCategory);
               createNewCategory (&categoryToAdd, &recipyToAdd, nomCategory); //peut passer un pointeur NULL
               insertInCategoryList (&headOfCategory, &categoryToAdd);
             }
         }
     }
-  printf("veuillez choisir le type de recherche que vous voulez:\n  ");
+  printf("Entrez votre critère de recherche : ");
+  scanf("%s", recherche);
+  
+  if(recherche == NULL)
+    {
+      fprintf (stderr, "La valeur de recherche n'est pas valide.\n");
+      exit (EXIT_FAILURE);
+    }
+  else
+    {
+      rechercheCategory = strtok (recherche, " ");
+      rechercheKeyWord = strtok (NULL, " \r\n");
+      if(rechercheKeyWord == NULL)
+        {
+          findCategory (headOfCategory);
+        }
+      else
+        {
+          rechercheOtherWord = strtok(NULL, " \r\n");
+          if(rechercheOtherWord == NULL) 
+            {
+              selectRecipyByKeyWordInACategory (headOfCategory, rechercheKeyWord);
+            }
+          else
+            {
+              printf ("Recherche invalide.");
+            }
+        }
+    }
   releaseCategoryAllocation (&headOfCategory);
   //rewind(dataBank);
   fclose (dataBank);

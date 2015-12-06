@@ -4,6 +4,7 @@
 #include <errno.h>
 #include "boolean.h"
 #include "assert.h"
+#include <ctype.h>
 
 typedef struct recette_s
 {
@@ -23,7 +24,9 @@ createNewRecipy (recette_t **pointerForRecipy, char* nomRecette)
 {
   *pointerForRecipy = (recette_t *) malloc (sizeof (recette_t));
   assert(pointerForRecipy != NULL && "Erreur d'allocation de memoire");
-  (*pointerForRecipy)->recipyName = nomRecette;
+  (*pointerForRecipy)->recipyName = (char*) malloc (sizeof (strlen(nomRecette) + 1));
+  assert(pointerForRecipy != NULL && "Erreur d'allocation de memoire");
+  strcpy((*pointerForRecipy)->recipyName, nomRecette);
   return EXIT_SUCCESS;
 }
 
@@ -32,7 +35,9 @@ createNewCategory (category_t **pointerForCategory, recette_t **pointerForRecipy
 {
   *pointerForCategory = (category_t *) malloc (sizeof (category_t));
   assert(pointerForCategory!= NULL && "Erreur d'allocation de memoire");
-  (*pointerForCategory)->categorieName = nomCategory;
+  (*pointerForCategory)->categorieName  = (char*) malloc (sizeof (strlen(nomCategory) + 1));
+  assert(pointerForCategory!= NULL && "Erreur d'allocation de memoire");
+  strcpy((*pointerForCategory)->categorieName, nomCategory);
   (*pointerForCategory)->recette_t = *pointerForRecipy;
   return EXIT_SUCCESS;
 }
@@ -40,9 +45,10 @@ createNewCategory (category_t **pointerForCategory, recette_t **pointerForRecipy
 int
 insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd)
 {
+  int valueOfCmp = 0;
   boolean estAjoute = FAUX;
   category_t *pointeur = *headOfCategory;
-  int valueOfCmp = 0;
+  
   if (*categoryToAdd == NULL)
     {
       fprintf (stderr, "le pointeur vers la liste de categorie que vous voulez n'existe pas.\n");
@@ -56,6 +62,9 @@ insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd)
         }
       else
         {
+          char* toAdd = (*categoryToAdd)->categorieName;
+          char* pointe = pointeur->categorieName;
+          printf("categoryToAdd->categorieName = %s et pointeur-> categorieName = %s ", (*categoryToAdd)->categorieName, pointeur->categorieName);
           valueOfCmp = strcasecmp ((*categoryToAdd)->categorieName, pointeur->categorieName);
           if (valueOfCmp == 0)
             {//cas où la categorie existe déja
@@ -66,15 +75,18 @@ insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd)
           else if (valueOfCmp < 0)
             {// nouvelle tête
               (*categoryToAdd)->next = pointeur;
+              *headOfCategory = *categoryToAdd;
               estAjoute = VRAI;
             }
           else
             {
               while (estAjoute == FAUX && pointeur->next != NULL)
                 {
+                  pointe = pointeur->next->categorieName;
                   valueOfCmp = strcasecmp ((*categoryToAdd)->categorieName, pointeur->next->categorieName);
                   if (valueOfCmp == 0)
                     {//cas identique
+                      insertInRecipyList ((*categoryToAdd)->recette_t, pointeur);
                       free (*categoryToAdd);
                       estAjoute = VRAI;
                     }
@@ -104,7 +116,7 @@ int
 insertInRecipyList (recette_t **recipyToAdd, category_t **categoryOfRecipy)
 {
   boolean estAjoute = FAUX;
-  recette_t *pointeur;
+  recette_t *pointeur = (*categoryOfRecipy)->recette_t;
   int valueOfcmp;
   
   if (*recipyToAdd == NULL || *categoryOfRecipy == NULL)
@@ -114,7 +126,6 @@ insertInRecipyList (recette_t **recipyToAdd, category_t **categoryOfRecipy)
     }
   else
     {
-      pointeur = (*categoryOfRecipy)->recette_t;
       valueOfcmp = strcasecmp ((*recipyToAdd)->recipyName, (*categoryOfRecipy)->recette_t->recipyName);
       if (valueOfcmp == 0)
         { //recette deja presente
@@ -161,27 +172,33 @@ insertInRecipyList (recette_t **recipyToAdd, category_t **categoryOfRecipy)
 }
 
 int
-findCategory (category_t *pointeurToReturn, category_t* headOfCategory, char* categorywanted)
+findCategory (category_t *headOfCategory, char* categorywanted)
 {
-  pointeurToReturn = headOfCategory;
+  category_t *pointer = headOfCategory;
   boolean finded = FAUX;
-  if (pointeurToReturn == NULL)
+  
+  if (headOfCategory == NULL)
     {
       fprintf (stderr, "le pointeur vers la liste de recette que vous voulez n'existe pas.\n");
       exit (EXIT_FAILURE);
     }
   else
     {
-      while (finded == FAUX && pointeurToReturn != NULL)
+      while (finded == FAUX && pointer != NULL)
         {
-          if (pointeurToReturn->categorieName == categorywanted)
+          if (strcasecmp(pointer->categorieName, categorywanted) == 0)
             {
+              printAllRecipyOfACategory (pointer);
               finded = VRAI;
             }
           else
             {
-              pointeurToReturn = pointeurToReturn->next;
+               pointer = pointer->next;
             }
+        }
+      if(finded == FAUX)
+        {
+          printf("Catégorie inexistante.\n");
         }
     }
   return EXIT_SUCCESS;
@@ -220,7 +237,7 @@ selectRecipyByKeyWordInACategory (category_t* headOfCategory, char* keyWord)
     {
       while (pointeur != NULL)
         {
-          if (strstr (pointeur->recipyName, keyWord) != NULL)
+          if (strcasecmp (pointeur->recipyName, keyWord) == 0)
             {
               fprintf (stdout, "%s\n", pointeur->recipyName);
             }

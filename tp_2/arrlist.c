@@ -19,6 +19,24 @@ typedef struct category_s
   struct category_s *next;
 } category_t;
 
+void loopInCategoryInsertion (category_t** categoryToAdd, int* valueOfCmp, boolean* estAjoute, category_t** pointeur);
+
+void doCategoryInsertion (category_t*** headOfCategory, category_t** categoryToAdd, int* valueOfCmp, boolean* estAjoute, category_t** pointeur, recette_t** recetteToAdd);
+
+void loopInRecipyInsertion (recette_t** recipyToAdd, boolean* estAjoute, recette_t** pointeur, int* valueOfcmp);
+
+void doRecipyInsertion (recette_t** recipyToAdd, category_t** categoryOfRecipy, boolean* estAjoute, recette_t** pointeur, int* valueOfcmp);
+
+void loopInCategoryPointer (char* categorywanted, category_t*** returnedcategory, category_t** pointer, boolean* finded);
+
+void loopInRecipyPointer (char* keyWord, boolean* finded, recette_t** pointeur);
+
+void validateResearch (category_t* headOfCategory, category_t** returnedCategory, char* rechercheCategory, char* rechercheKeyWord, char* rechercheOtherWord);
+
+void selectResearchMode (category_t* headOfCategory, category_t** returnedCategory, char* rechercheCategory, char* rechercheKeyWord, char* rechercheOtherWord);
+
+void doResearch (category_t* headOfCategory, char* recherche, category_t** returnedCategory);
+
 int
 createNewRecipy (recette_t **pointerForRecipy, char* nomRecette)
 {
@@ -43,7 +61,9 @@ createNewCategory (category_t **pointerForCategory, recette_t **pointerForRecipy
   return EXIT_SUCCESS;
 }
 
-void loopInCategoryInsertion(category_t** categoryToAdd, int* valueOfCmp, boolean* estAjoute, category_t** pointeur){
+void
+loopInCategoryInsertion (category_t** categoryToAdd, int* valueOfCmp, boolean* estAjoute, category_t** pointeur)
+{
   while ((*estAjoute) == FAUX && (*pointeur)->next != NULL)
     {
       (*valueOfCmp) = strcasecmp ((*categoryToAdd)->categorieName, (*pointeur)->next->categorieName);
@@ -67,11 +87,13 @@ void loopInCategoryInsertion(category_t** categoryToAdd, int* valueOfCmp, boolea
     }
 }
 
-void doCategoryInsertion(category_t*** headOfCategory, category_t** categoryToAdd, int* valueOfCmp, boolean* estAjoute, category_t** pointeur, recette_t** recetteToAdd){
+void
+doCategoryInsertion (category_t*** headOfCategory, category_t** categoryToAdd, int* valueOfCmp, boolean* estAjoute, category_t** pointeur, recette_t** recetteToAdd)
+{
   (*valueOfCmp) = strcasecmp ((*categoryToAdd)->categorieName, (*pointeur)->categorieName);
   if ((*valueOfCmp) == 0)
     {//cas où la categorie existe déja
-      
+
       insertInRecipyList (&(*recetteToAdd), &(*pointeur));
       free (*categoryToAdd);
       (*estAjoute) = VRAI;
@@ -84,7 +106,7 @@ void doCategoryInsertion(category_t*** headOfCategory, category_t** categoryToAd
     }
   else
     {
-      loopInCategoryInsertion(categoryToAdd, valueOfCmp, estAjoute, pointeur);
+      loopInCategoryInsertion (categoryToAdd, valueOfCmp, estAjoute, pointeur);
       if ((*valueOfCmp) > 0 && (*pointeur)->next == NULL)
         {//en dernier
           (*pointeur)->next = *categoryToAdd;
@@ -116,14 +138,16 @@ insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd)
         {
           char* toAdd = (*categoryToAdd)->categorieName;
           char* pointe = pointeur->categorieName;
-          doCategoryInsertion(&headOfCategory, categoryToAdd, &valueOfCmp, &estAjoute, &pointeur, &recetteToAdd);
+          doCategoryInsertion (&headOfCategory, categoryToAdd, &valueOfCmp, &estAjoute, &pointeur, &recetteToAdd);
         }
     }
 
   return EXIT_SUCCESS;
 }
 
-void loopInRecipyInsertion(recette_t** recipyToAdd, boolean* estAjoute, recette_t** pointeur, int* valueOfcmp){
+void
+loopInRecipyInsertion (recette_t** recipyToAdd, boolean* estAjoute, recette_t** pointeur, int* valueOfcmp)
+{
   while ((*estAjoute) == FAUX && (*pointeur)->next != NULL)
     {
       (*valueOfcmp) = strcasecmp ((*recipyToAdd)->recipyName, (*pointeur)->next->recipyName);
@@ -146,7 +170,9 @@ void loopInRecipyInsertion(recette_t** recipyToAdd, boolean* estAjoute, recette_
     }
 }
 
-void doRecipyInsertion(recette_t** recipyToAdd, category_t** categoryOfRecipy, boolean* estAjoute, recette_t** pointeur, int* valueOfcmp){
+void
+doRecipyInsertion (recette_t** recipyToAdd, category_t** categoryOfRecipy, boolean* estAjoute, recette_t** pointeur, int* valueOfcmp)
+{
   (*valueOfcmp) = strcasecmp ((*recipyToAdd)->recipyName, (*categoryOfRecipy)->recette_t->recipyName);
   if ((*valueOfcmp) == 0)
     { //recette deja presente
@@ -161,7 +187,7 @@ void doRecipyInsertion(recette_t** recipyToAdd, category_t** categoryOfRecipy, b
     }
   else
     {
-      loopInRecipyInsertion(recipyToAdd, &(*estAjoute), &(*pointeur), &(*valueOfcmp));
+      loopInRecipyInsertion (recipyToAdd, &(*estAjoute), &(*pointeur), &(*valueOfcmp));
       if ((*valueOfcmp) > 0 && (*pointeur)->next == NULL)
         {
           (*pointeur)->next = *recipyToAdd;
@@ -184,7 +210,7 @@ insertInRecipyList (recette_t **recipyToAdd, category_t **categoryOfRecipy)
     }
   else
     {
-      doRecipyInsertion(recipyToAdd, categoryOfRecipy, &estAjoute, &pointeur, &valueOfcmp);
+      doRecipyInsertion (recipyToAdd, categoryOfRecipy, &estAjoute, &pointeur, &valueOfcmp);
     }
   return EXIT_SUCCESS;
 }
@@ -249,7 +275,8 @@ printAllRecipyOfACategory (category_t * theCategory)
 }
 
 void
-loopInRecipyPointer(char* keyWord, boolean* finded, recette_t** pointeur){
+loopInRecipyPointer (char* keyWord, boolean* finded, recette_t** pointeur)
+{
   while ((*pointeur) != NULL)
     {
       if (strcasestr ((*pointeur)->recipyName, keyWord) != NULL)
@@ -273,7 +300,7 @@ selectRecipyByKeyWordInACategory (category_t* headOfCategory, char* keyWord)
     }
   else
     {
-      loopInRecipyPointer(keyWord, &finded, &pointeur);
+      loopInRecipyPointer (keyWord, &finded, &pointeur);
       if (finded == FAUX)
         {
           printf ("Catégorie inexistante.\n");

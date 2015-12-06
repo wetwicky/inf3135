@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -277,7 +278,8 @@ loopInRecipyPointer (char* keyWord, boolean_t* finded, recette_t** pointeur)
 {
   while ((*pointeur) != NULL)
     {
-      if (strcasestr ((*pointeur)->recipyName, keyWord) != NULL)
+      char* isNull = (char*) strcasestr ((*pointeur)->recipyName, keyWord);
+      if (isNull != NULL)
         {
           fprintf (stdout, "%s\n", (*pointeur)->recipyName);
           (*finded) = VRAI;

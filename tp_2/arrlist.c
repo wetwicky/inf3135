@@ -43,10 +43,9 @@ createNewCategory (category_t **pointerForCategory, recette_t **pointerForRecipy
   return EXIT_SUCCESS;
 }
 
-void loopInCategoryInsertion(category_t** categoryToAdd, int* valueOfCmp, boolean* estAjoute, category_t** pointeur, char** pointe){
+void loopInCategoryInsertion(category_t** categoryToAdd, int* valueOfCmp, boolean* estAjoute, category_t** pointeur){
   while ((*estAjoute) == FAUX && (*pointeur)->next != NULL)
     {
-      (*pointe) = (*pointeur)->next->categorieName;
       (*valueOfCmp) = strcasecmp ((*categoryToAdd)->categorieName, (*pointeur)->next->categorieName);
       if ((*valueOfCmp) == 0)
         {//cas identique
@@ -68,7 +67,7 @@ void loopInCategoryInsertion(category_t** categoryToAdd, int* valueOfCmp, boolea
     }
 }
 
-void doCategoryInsertion(category_t*** headOfCategory, category_t** categoryToAdd, int* valueOfCmp, boolean* estAjoute, category_t** pointeur, recette_t** recetteToAdd, char** pointe){
+void doCategoryInsertion(category_t*** headOfCategory, category_t** categoryToAdd, int* valueOfCmp, boolean* estAjoute, category_t** pointeur, recette_t** recetteToAdd){
   (*valueOfCmp) = strcasecmp ((*categoryToAdd)->categorieName, (*pointeur)->categorieName);
   if ((*valueOfCmp) == 0)
     {//cas où la categorie existe déja
@@ -85,7 +84,7 @@ void doCategoryInsertion(category_t*** headOfCategory, category_t** categoryToAd
     }
   else
     {
-      loopInCategoryInsertion(categoryToAdd, &(*valueOfCmp), &(*estAjoute), &(*pointeur), &(*pointe));
+      loopInCategoryInsertion(categoryToAdd, valueOfCmp, estAjoute, pointeur);
       if ((*valueOfCmp) > 0 && (*pointeur)->next == NULL)
         {//en dernier
           (*pointeur)->next = *categoryToAdd;
@@ -117,7 +116,7 @@ insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd)
         {
           char* toAdd = (*categoryToAdd)->categorieName;
           char* pointe = pointeur->categorieName;
-          doCategoryInsertion(&headOfCategory, categoryToAdd, &valueOfCmp, &estAjoute, &pointeur, &recetteToAdd, &pointe);
+          doCategoryInsertion(&headOfCategory, categoryToAdd, &valueOfCmp, &estAjoute, &pointeur, &recetteToAdd);
         }
     }
 

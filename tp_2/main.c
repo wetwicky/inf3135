@@ -19,7 +19,9 @@
 #include "boolean.h"
 #include "parameter.h"
 
-void parsingInformation(char* lineBuffer, char** nomRecette, char** nomCategory, category_t** categoryToAdd, recette_t** recipyToAdd, category_t** headOfCategory, FILE* dataBank){
+void
+parsingInformation (char* lineBuffer, char** nomRecette, char** nomCategory, category_t** categoryToAdd, recette_t** recipyToAdd, category_t** headOfCategory, FILE* dataBank)
+{
   while (!feof (dataBank))
     {
       fgets (lineBuffer, 120, dataBank);
@@ -41,9 +43,6 @@ void parsingInformation(char* lineBuffer, char** nomRecette, char** nomCategory,
     }
 }
 
-/*
- * 
- */
 int
 main (int argc, char** argv)
 {
@@ -57,8 +56,8 @@ main (int argc, char** argv)
 
   validationNombreDeParametre (argc, argv[0]);
   ouvertureFichier (&dataBank, argv[1], "r");
-  parsingInformation(lineBuffer, &nomRecette, &nomCategory, &categoryToAdd, &recipyToAdd, &headOfCategory, dataBank);
-  research(headOfCategory);
+  parsingInformation (lineBuffer, &nomRecette, &nomCategory, &categoryToAdd, &recipyToAdd, &headOfCategory, dataBank);
+  research (headOfCategory);
   releaseCategoryAllocation (&headOfCategory);
   fclose (dataBank);
   return (EXIT_SUCCESS);

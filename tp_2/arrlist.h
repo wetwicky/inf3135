@@ -29,6 +29,9 @@ int createNewCategory (category_t **pointerForCategory, recette_t **pointerForRe
  */
 int insertInRecipyList (recette_t **recipyToAdd, category_t **categoryOfRecipy);
 
+/*
+ Put a category in an arrayList
+ */
 int insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd);
 
 /*
@@ -41,10 +44,19 @@ int printAllRecipyOfACategory (category_t * theCategory);
  */
 int selectRecipyByKeyWordInACategory (category_t* headOfCategory, char* keyWord);
 
+/*
+ find a categoy that is the same as the category wanted.
+ */
 int findCategory (category_t *headOfCategory, char* categorywanted, category_t **returnedCategory);
 
+/*
+ release all recipy allocations.
+ */
 int releaseRecipyAllocation(recette_t **headOfRecipy);
 
+/*
+ release all category allocations.
+ */
 int releaseCategoryAllocation(category_t ** headOfCategory);
 
 #endif /* ARRLIST_H */

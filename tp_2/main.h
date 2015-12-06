@@ -14,6 +14,9 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+/*
+ validate the number of parameter
+ */
 int validationNombreDeParametre (int, char*);
 int ouvertureFichier (FILE*, char*, char*);
 #endif /* MAIN_H */

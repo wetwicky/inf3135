@@ -304,4 +304,48 @@ int releaseCategoryAllocation(category_t ** headOfCategory)
         }
     }
 }
+int
+research (category_t* headOfCategory)
+{
+  char recherche[120] = {0};
+  char *rechercheCategory = NULL;
+  char *rechercheKeyWord = NULL;
+  char *rechercheOtherWord = NULL;
+  category_t *returnedCategory = NULL;
+printf ("Entrez votre critère de recherche («quit» pour terminer): ");
+  fgets (recherche, 120 ,stdin);
+  while (strcasecmp(recherche, "quit\n") != 0)
+    {
+      if (recherche == NULL)
+        {
+          fprintf (stderr, "La valeur de recherche n'est pas valide.\n");
+          exit (EXIT_FAILURE);
+        }
+      else
+        {
+          rechercheCategory = strtok (recherche, " \r\n");
+          rechercheKeyWord = strtok (NULL, " \r\n");
+          if (rechercheKeyWord == NULL)
+            {
+              findCategory (headOfCategory, rechercheCategory, &returnedCategory);
+              printAllRecipyOfACategory (returnedCategory);
+            }
+          else
+            {
+              rechercheOtherWord = strtok (NULL, " \r\n");
+              if (rechercheOtherWord == NULL)
+                {
+                  findCategory (headOfCategory, rechercheCategory, &returnedCategory);
+                  selectRecipyByKeyWordInACategory (returnedCategory, rechercheKeyWord);
+                }
+              else
+                {
+                  printf ("Recherche invalide.");
+                }
+            }
+        }
+      printf ("Entrez votre critère de recherche («quit» pour terminer): ");
+      fgets (recherche, 120 ,stdin);
+    }
+}
 

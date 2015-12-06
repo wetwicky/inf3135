@@ -15,32 +15,9 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include <malloc.h>
 #include "arrlist.h"
 #include "boolean.h"
-
-int
-validationNombreDeParametre (int nombreDeParametre, char* fichierExecution)
-{
-  if (nombreDeParametre != 2)
-    {
-      fprintf (stderr, "Usage: %s [nom_du_fichier_d_entree] [nom_du_fichier_de_sortie]\n", fichierExecution);
-      exit (EXIT_FAILURE);
-    }
-  return EXIT_SUCCESS;
-}
-
-int
-ouvertureFichier (FILE **fichierAOuvrir, char* cheminFichier, char* droitAcces)
-{
-  *fichierAOuvrir = fopen (cheminFichier, droitAcces);
-  if (!fichierAOuvrir)
-    {
-      fprintf (stderr, "Erreur: %s\n", strerror (errno));
-      exit (EXIT_FAILURE);
-    }
-  return EXIT_SUCCESS;
-}
+#include "parameter.h"
 
 /*
  * 
@@ -49,16 +26,11 @@ int
 main (int argc, char** argv)
 {
   char lineBuffer[120] = {0};
-  char recherche[120] = {0};
-  char *rechercheCategory = NULL;
-  char *rechercheKeyWord = NULL;
-  char *rechercheOtherWord = NULL;
   char *nomRecette = NULL;
   char *nomCategory = NULL;
   category_t *categoryToAdd = NULL;
   recette_t *recipyToAdd = NULL;
   category_t *headOfCategory = NULL;
-  category_t *returnedCategory = NULL;
   FILE *dataBank = NULL;
 
   validationNombreDeParametre (argc, argv[0]);
@@ -83,41 +55,7 @@ main (int argc, char** argv)
             }
         }
     }
-  printf ("Entrez votre critère de recherche («quit» pour terminer): ");
-  fgets (recherche, 120 ,stdin);
-  while (strcasecmp(recherche, "quit\n") != 0)
-    {
-      if (recherche == NULL)
-        {
-          fprintf (stderr, "La valeur de recherche n'est pas valide.\n");
-          exit (EXIT_FAILURE);
-        }
-      else
-        {
-          rechercheCategory = strtok (recherche, " \r\n");
-          rechercheKeyWord = strtok (NULL, " \r\n");
-          if (rechercheKeyWord == NULL)
-            {
-              findCategory (headOfCategory, rechercheCategory, &returnedCategory);
-              printAllRecipyOfACategory (returnedCategory);
-            }
-          else
-            {
-              rechercheOtherWord = strtok (NULL, " \r\n");
-              if (rechercheOtherWord == NULL)
-                {
-                  findCategory (headOfCategory, rechercheCategory, &returnedCategory);
-                  selectRecipyByKeyWordInACategory (returnedCategory, rechercheKeyWord);
-                }
-              else
-                {
-                  printf ("Recherche invalide.");
-                }
-            }
-        }
-      printf ("Entrez votre critère de recherche («quit» pour terminer): ");
-      fgets (recherche, 120 ,stdin);
-    }
+  research();
   releaseCategoryAllocation (&headOfCategory);
   //rewind(dataBank);
   fclose (dataBank);

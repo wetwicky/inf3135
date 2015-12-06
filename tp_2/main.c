@@ -19,6 +19,28 @@
 #include "boolean.h"
 #include "parameter.h"
 
+void parsingInformation(char* lineBuffer, char** nomRecette, char** nomCategory, category_t** categoryToAdd, recette_t** recipyToAdd, category_t** headOfCategory, FILE* dataBank){
+  while (!feof (dataBank))
+    {
+      fgets (lineBuffer, 120, dataBank);
+      (*nomRecette) = strtok (lineBuffer, "[");
+      createNewRecipy (&(*recipyToAdd), (*nomRecette));
+      (*nomCategory) = strtok (NULL, "[]");
+      createNewCategory (&(*categoryToAdd), &(*recipyToAdd), (*nomCategory));
+      insertInCategoryList (&(*headOfCategory), &(*categoryToAdd));
+      while ((*nomCategory) != NULL)
+        {
+          (*nomCategory) = strtok (NULL, "[]");
+          if (!((*nomCategory) == NULL || strcmp ((*nomCategory), " ") == 0 || strcmp ((*nomCategory), "\r\n") == 0))
+            {
+              createNewRecipy (&(*recipyToAdd), (*nomRecette));
+              createNewCategory (&(*categoryToAdd), &(*recipyToAdd), (*nomCategory));
+              insertInCategoryList (&(*headOfCategory), &(*categoryToAdd));
+            }
+        }
+    }
+}
+
 /*
  * 
  */
@@ -35,29 +57,9 @@ main (int argc, char** argv)
 
   validationNombreDeParametre (argc, argv[0]);
   ouvertureFichier (&dataBank, argv[1], "r");
-  while (!feof (dataBank))
-    {
-      fgets (lineBuffer, 120, dataBank);
-      nomRecette = strtok (lineBuffer, "[");
-      createNewRecipy (&recipyToAdd, nomRecette);
-      nomCategory = strtok (NULL, "[]");
-      createNewCategory (&categoryToAdd, &recipyToAdd, nomCategory);
-      insertInCategoryList (&headOfCategory, &categoryToAdd);
-      while (nomCategory != NULL)
-        {
-          nomCategory = strtok (NULL, "[]");
-          if (!(nomCategory == NULL || strcmp (nomCategory, " ") == 0 || strcmp (nomCategory, "\r\n") == 0))
-            {
-              createNewRecipy (&recipyToAdd, nomRecette);
-              createNewCategory (&categoryToAdd, &recipyToAdd, nomCategory);
-              insertInCategoryList (&headOfCategory, &categoryToAdd);
-
-            }
-        }
-    }
+  parsingInformation(lineBuffer, &nomRecette, &nomCategory, &categoryToAdd, &recipyToAdd, &headOfCategory, dataBank);
   research(headOfCategory);
   releaseCategoryAllocation (&headOfCategory);
-  //rewind(dataBank);
   fclose (dataBank);
   return (EXIT_SUCCESS);
 }

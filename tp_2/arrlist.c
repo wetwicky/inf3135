@@ -354,6 +354,7 @@ releaseCategoryAllocation (category_t ** headOfCategory)
           free (*headOfCategory);
         }
     }
+  return EXIT_SUCCESS;
 }
 
 void

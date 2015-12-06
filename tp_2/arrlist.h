@@ -104,5 +104,14 @@ int releaseRecipyAllocation(recette_t **headOfRecipy);
  */
 int releaseCategoryAllocation(category_t ** headOfCategory);
 
+/*
+ * start and loop in the research process.
+ * 
+ * @param:  category_t ** headOfCategory
+ * 
+ * @return: int for success
+ */
+int research (category_t* headOfCategory);
+
 #endif /* ARRLIST_H */
 

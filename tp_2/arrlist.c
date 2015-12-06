@@ -136,8 +136,6 @@ insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd)
         }
       else
         {
-          char* toAdd = (*categoryToAdd)->categorieName;
-          char* pointe = pointeur->categorieName;
           doCategoryInsertion (&headOfCategory, categoryToAdd, &valueOfCmp, &estAjoute, &pointeur, &recetteToAdd);
         }
     }
@@ -419,5 +417,6 @@ research (category_t* headOfCategory)
       printf ("Entrez votre critère de recherche («quit» pour terminer): ");
       fgets (recherche, 120, stdin);
     }
+  return EXIT_SUCCESS;
 }
 

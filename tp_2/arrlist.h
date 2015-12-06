@@ -41,7 +41,7 @@ int printAllRecipyOfACategory (category_t * theCategory);
  */
 int selectRecipyByKeyWordInACategory (category_t* headOfCategory, char* keyWord);
 
-int findCategory (category_t *headOfCategory, char* categorywanted);
+int findCategory (category_t *headOfCategory, char* categorywanted, category_t **returnedCategory);
 
 int releaseRecipyAllocation(recette_t **headOfRecipy);
 

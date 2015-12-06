@@ -58,6 +58,7 @@ main (int argc, char** argv)
   category_t *categoryToAdd = NULL;
   recette_t *recipyToAdd = NULL;
   category_t *headOfCategory = NULL;
+  category_t *returnedCategory = NULL;
   FILE *dataBank = NULL;
 
   validationNombreDeParametre (argc, argv[0]);
@@ -78,38 +79,44 @@ main (int argc, char** argv)
               createNewRecipy (&recipyToAdd, nomRecette);
               createNewCategory (&categoryToAdd, &recipyToAdd, nomCategory);
               insertInCategoryList (&headOfCategory, &categoryToAdd);
-              
+
             }
         }
     }
-  printf ("Entrez votre critère de recherche : ");
-  scanf ("%s", recherche);
-
-  if (recherche == NULL)
+  printf ("Entrez votre critère de recherche («quit» pour terminer): ");
+  fgets (recherche, 120 ,stdin);
+  while (strcasecmp(recherche, "quit\n") != 0)
     {
-      fprintf (stderr, "La valeur de recherche n'est pas valide.\n");
-      exit (EXIT_FAILURE);
-    }
-  else
-    {
-      rechercheCategory = strtok (recherche, " ");
-      rechercheKeyWord = strtok (NULL, " \r\n");
-      if (rechercheKeyWord == NULL)
+      if (recherche == NULL)
         {
-          findCategory (headOfCategory, rechercheCategory);
+          fprintf (stderr, "La valeur de recherche n'est pas valide.\n");
+          exit (EXIT_FAILURE);
         }
       else
         {
-          rechercheOtherWord = strtok (NULL, " \r\n");
-          if (rechercheOtherWord == NULL)
+          rechercheCategory = strtok (recherche, " \r\n");
+          rechercheKeyWord = strtok (NULL, " \r\n");
+          if (rechercheKeyWord == NULL)
             {
-              selectRecipyByKeyWordInACategory (headOfCategory, rechercheKeyWord);
+              findCategory (headOfCategory, rechercheCategory, &returnedCategory);
+              printAllRecipyOfACategory (returnedCategory);
             }
           else
             {
-              printf ("Recherche invalide.");
+              rechercheOtherWord = strtok (NULL, " \r\n");
+              if (rechercheOtherWord == NULL)
+                {
+                  findCategory (headOfCategory, rechercheCategory, &returnedCategory);
+                  selectRecipyByKeyWordInACategory (returnedCategory, rechercheKeyWord);
+                }
+              else
+                {
+                  printf ("Recherche invalide.");
+                }
             }
         }
+      printf ("Entrez votre critère de recherche («quit» pour terminer): ");
+      fgets (recherche, 120 ,stdin);
     }
   releaseCategoryAllocation (&headOfCategory);
   //rewind(dataBank);

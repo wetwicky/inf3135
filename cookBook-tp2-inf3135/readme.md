@@ -39,7 +39,7 @@ Si tel est le cas,
 *ce qui donne avec le parametre:*
 
 ```c
-./executable fichierDesDonnees.txt
+ex: ./executable test.txt
 ```
 ##etape 3
 -------
@@ -54,9 +54,10 @@ ex: <nomDeLaCategorie>
 
 la/les recette(s) ayant le mot clé saisie (une categorie et un mot clé) 
 ```c
-ex: <nomDeLaCategorie> <motClé>
+ex: <nomDeLaCategorie> <motCle>
 ```
-Pour quitter, simplement saisir le mot mot <quit> et appuyer sur <enter> lorsque 
-la phrase <Entrez votre critère de recherche («quit» pour terminer): > apparait.
+Pour quitter, simplement saisir le mot `quit`
+
+et appuyer sur `Enter` lorsque la phrase `Entrez votre critère de recherche («quit» pour terminer): ` apparait.
 
 

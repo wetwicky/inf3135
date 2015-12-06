@@ -55,7 +55,7 @@ main (int argc, char** argv)
             }
         }
     }
-  research();
+  research(headOfCategory);
   releaseCategoryAllocation (&headOfCategory);
   //rewind(dataBank);
   fclose (dataBank);

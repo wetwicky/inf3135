@@ -14,7 +14,7 @@
 #ifndef BOOLEAN_H
 #define BOOLEAN_H
 
-typedef enum Bool {FAUX, VRAI } boolean;
+typedef enum Bool {FAUX, VRAI } boolean_t;
 
 #endif /* BOOLEAN_H */
 

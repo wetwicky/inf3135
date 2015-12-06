@@ -16,7 +16,6 @@
 #include <errno.h>
 #include <string.h>
 #include "arrlist.h"
-#include "boolean.h"
 #include "parameter.h"
 
 void

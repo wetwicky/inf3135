@@ -1,11 +1,12 @@
 =======
 #UTILITE
 =======
-Ce logiciel permet de chercher des recette trié par categorie. la recherche peux se faire
+Ce logiciel permet de chercher des recette trié par categorie. la recherche peux se faire 
 par categorie ou bien par categorie avec un mot clé. Un mot clé est une suite de caractere
-alphabétique qui peuvent apparaitre dans le nom d'une recette qui se trouve dans la categorie
+alphabétique qui peuvent apparaitre dans le nom d'une recette qui se trouve dans la categorie. 
 le logiciel a ete redige en langage C dans le cadre du cours INF3135 de Jacques Bergers pour
 la session d'automne 2015.
+
 =============
 #MODE D'EMPLOI DU MAKEFILE
 =============
@@ -46,13 +47,15 @@ en appuyant sur `Enter` vous venez d'executer le fichier avec le parametre néce
 Vous pouvez ensuite rechercher :
 
 votre/vos recette(s) en écrivant (une categorie) 
+```c
 ex: <nomDeLaCategorie>
-
+```
   ou  
 
 la/les recette(s) ayant le mot clé saisie (une categorie et un mot clé) 
+```c
 ex: <nomDeLaCategorie> <motClé>
-
+```
 Pour quitter, simplement saisir le mot mot <quit> et appuyer sur <enter> lorsque 
 la phrase <Entrez votre critère de recherche («quit» pour terminer): > apparait.
 

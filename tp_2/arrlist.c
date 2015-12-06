@@ -38,6 +38,8 @@ void selectResearchMode (category_t* headOfCategory, category_t** returnedCatego
 
 void doResearch (category_t* headOfCategory, char* recherche, category_t** returnedCategory);
 
+int insertInRecipyList (recette_t **recipyToAdd, category_t **categoryOfRecipy);
+
 int
 createNewRecipy (recette_t **pointerForRecipy, char* nomRecette)
 {

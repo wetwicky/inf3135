@@ -23,8 +23,9 @@ int
 createNewRecipy (recette_t **pointerForRecipy, char* nomRecette)
 {
   *pointerForRecipy = (recette_t *) malloc (sizeof (recette_t));
+  (*pointerForRecipy)->next = NULL;
   assert(pointerForRecipy != NULL && "Erreur d'allocation de memoire");
-  (*pointerForRecipy)->recipyName = (char*) malloc (sizeof (strlen(nomRecette) + 1));
+  (*pointerForRecipy)->recipyName = (char*) malloc (sizeof (nomRecette));
   assert(pointerForRecipy != NULL && "Erreur d'allocation de memoire");
   strcpy((*pointerForRecipy)->recipyName, nomRecette);
   return EXIT_SUCCESS;
@@ -48,6 +49,7 @@ insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd)
   int valueOfCmp = 0;
   boolean estAjoute = FAUX;
   category_t *pointeur = *headOfCategory;
+  recette_t *recetteToAdd = (*categoryToAdd)->recette_t;
   
   if (*categoryToAdd == NULL)
     {
@@ -67,7 +69,8 @@ insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd)
           valueOfCmp = strcasecmp ((*categoryToAdd)->categorieName, pointeur->categorieName);
           if (valueOfCmp == 0)
             {//cas où la categorie existe déja
-              insertInRecipyList (&(*categoryToAdd)->recette_t, &pointeur);
+              
+              insertInRecipyList (&recetteToAdd, &pointeur);
               free (*categoryToAdd);
               estAjoute = VRAI;
             }
@@ -85,7 +88,7 @@ insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd)
                   valueOfCmp = strcasecmp ((*categoryToAdd)->categorieName, pointeur->next->categorieName);
                   if (valueOfCmp == 0)
                     {//cas identique
-                      insertInRecipyList (&(*categoryToAdd)->recette_t, &pointeur->next);
+                      insertInRecipyList (&(*categoryToAdd)->recette_t, &(pointeur->next));
                       free (*categoryToAdd);
                       estAjoute = VRAI;
                     }
@@ -156,7 +159,6 @@ insertInRecipyList (recette_t **recipyToAdd, category_t **categoryOfRecipy)
                   recette_t *tmp = pointeur->next;
                   pointeur->next = *recipyToAdd;
                   (*recipyToAdd)->next = tmp;
-                  (*categoryOfRecipy)->recette_t = *recipyToAdd;
                   estAjoute = VRAI;
                 }
               else

@@ -75,8 +75,10 @@ main (int argc, char** argv)
           nomCategory = strtok (NULL, "[]");
           if (!(nomCategory == NULL || strcmp (nomCategory, " ") == 0 || strcmp (nomCategory, "\r\n") == 0))
             {
+              createNewRecipy (&recipyToAdd, nomRecette);
               createNewCategory (&categoryToAdd, &recipyToAdd, nomCategory);
               insertInCategoryList (&headOfCategory, &categoryToAdd);
+              
             }
         }
     }

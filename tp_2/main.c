@@ -67,26 +67,23 @@ main (int argc, char** argv)
       fgets (lineBuffer, 120, dataBank);
       nomRecette = strtok (lineBuffer, "[");
       createNewRecipy (&recipyToAdd, nomRecette);
-      printf("recipyToAdd->recipyName = %s", recipyToAdd->recipyName);
       nomCategory = strtok (NULL, "[]");
-      printf ("nomCategory = %s\n", nomCategory);
-      createNewCategory (&categoryToAdd, &recipyToAdd, nomCategory); //peut passer un pointeur NULL
+      createNewCategory (&categoryToAdd, &recipyToAdd, nomCategory);
       insertInCategoryList (&headOfCategory, &categoryToAdd);
       while (nomCategory != NULL)
         {
           nomCategory = strtok (NULL, "[]");
-          printf ("nomCategory = %s\n", nomCategory);
-          if(!(nomCategory == NULL || strcmp(nomCategory, " ") == 0 || strcmp(nomCategory, "\r\n") == 0))
+          if (!(nomCategory == NULL || strcmp (nomCategory, " ") == 0 || strcmp (nomCategory, "\r\n") == 0))
             {
-              createNewCategory (&categoryToAdd, &recipyToAdd, nomCategory); //peut passer un pointeur NULL
+              createNewCategory (&categoryToAdd, &recipyToAdd, nomCategory);
               insertInCategoryList (&headOfCategory, &categoryToAdd);
             }
         }
     }
-  printf("Entrez votre critère de recherche : ");
-  scanf("%s", recherche);
-  
-  if(recherche == NULL)
+  printf ("Entrez votre critère de recherche : ");
+  scanf ("%s", recherche);
+
+  if (recherche == NULL)
     {
       fprintf (stderr, "La valeur de recherche n'est pas valide.\n");
       exit (EXIT_FAILURE);
@@ -95,14 +92,14 @@ main (int argc, char** argv)
     {
       rechercheCategory = strtok (recherche, " ");
       rechercheKeyWord = strtok (NULL, " \r\n");
-      if(rechercheKeyWord == NULL)
+      if (rechercheKeyWord == NULL)
         {
-          findCategory (headOfCategory);
+          findCategory (headOfCategory, rechercheCategory);
         }
       else
         {
-          rechercheOtherWord = strtok(NULL, " \r\n");
-          if(rechercheOtherWord == NULL) 
+          rechercheOtherWord = strtok (NULL, " \r\n");
+          if (rechercheOtherWord == NULL)
             {
               selectRecipyByKeyWordInACategory (headOfCategory, rechercheKeyWord);
             }

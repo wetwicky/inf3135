@@ -17,31 +17,35 @@ typedef struct category_s
 /*
  Allocate memory for a new recipy
  */
-recette_t* createNewRecipy (recette_t **, char*);
+int createNewRecipy (recette_t **pointerForRecipy, char* nomRecette);
 
 /*
  Allocate memory for a new category
  */
-category_t* createNewCategory (category_t**, recette_t**, char*);
+int createNewCategory (category_t **pointerForCategory, recette_t **pointerForRecipy, char* nomCategory);
 
 /*
  Put a recipy in an arrayList
  */
-int insertInRecipyList(recette_t**, category_t**);
+int insertInRecipyList (recette_t **recipyToAdd, category_t **categoryOfRecipy);
+
+int insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd);
 
 /*
  Print out all the recipies from a category.
  */
-int printAllRecipyOfACategory (category_t**);
+int printAllRecipyOfACategory (category_t * theCategory);
 
 /*
  Print out the recipies containing the keyword.
  */
-int printRecipiesByKeyWordInACategory (category_t**, char*);
+int selectRecipyByKeyWordInACategory (category_t* headOfCategory, char* keyWord);
 
-int releaseRecipyAllocation(recette_t**);
+int findCategory (category_t *headOfCategory, char* categorywanted);
 
-int releaseCategoryAllocation(category_t**);
+int releaseRecipyAllocation(recette_t **headOfRecipy);
+
+int releaseCategoryAllocation(category_t ** headOfCategory);
 
 #endif /* ARRLIST_H */
 

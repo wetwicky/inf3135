@@ -64,11 +64,10 @@ insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd)
         {
           char* toAdd = (*categoryToAdd)->categorieName;
           char* pointe = pointeur->categorieName;
-          printf("categoryToAdd->categorieName = %s et pointeur-> categorieName = %s ", (*categoryToAdd)->categorieName, pointeur->categorieName);
           valueOfCmp = strcasecmp ((*categoryToAdd)->categorieName, pointeur->categorieName);
           if (valueOfCmp == 0)
             {//cas où la categorie existe déja
-              insertInRecipyList ((*categoryToAdd)->recette_t, pointeur);
+              insertInRecipyList (&(*categoryToAdd)->recette_t, &pointeur);
               free (*categoryToAdd);
               estAjoute = VRAI;
             }
@@ -86,13 +85,15 @@ insertInCategoryList (category_t **headOfCategory, category_t **categoryToAdd)
                   valueOfCmp = strcasecmp ((*categoryToAdd)->categorieName, pointeur->next->categorieName);
                   if (valueOfCmp == 0)
                     {//cas identique
-                      insertInRecipyList ((*categoryToAdd)->recette_t, pointeur);
+                      insertInRecipyList (&(*categoryToAdd)->recette_t, &pointeur->next);
                       free (*categoryToAdd);
                       estAjoute = VRAI;
                     }
                   else if (valueOfCmp < 0)
                     {//entre deux
-                      (*categoryToAdd)->next = pointeur;
+                      category_t *tmp = pointeur->next;
+                      pointeur->next = *categoryToAdd;
+                      (*categoryToAdd)->next = tmp;
                       estAjoute = VRAI;
                     }
                   else
@@ -117,7 +118,7 @@ insertInRecipyList (recette_t **recipyToAdd, category_t **categoryOfRecipy)
 {
   boolean estAjoute = FAUX;
   recette_t *pointeur = (*categoryOfRecipy)->recette_t;
-  int valueOfcmp;
+  int valueOfcmp = 0;
   
   if (*recipyToAdd == NULL || *categoryOfRecipy == NULL)
     {
@@ -126,6 +127,8 @@ insertInRecipyList (recette_t **recipyToAdd, category_t **categoryOfRecipy)
     }
   else
     {
+      char* toAdd = (*recipyToAdd)->recipyName;
+      char* recette = (*categoryOfRecipy)->recette_t->recipyName;
       valueOfcmp = strcasecmp ((*recipyToAdd)->recipyName, (*categoryOfRecipy)->recette_t->recipyName);
       if (valueOfcmp == 0)
         { //recette deja presente
@@ -186,6 +189,7 @@ findCategory (category_t *headOfCategory, char* categorywanted)
     {
       while (finded == FAUX && pointer != NULL)
         {
+          printf("pointer->categorieName = %s et categorywanted = %s\n", pointer->categorieName, categorywanted);
           if (strcasecmp(pointer->categorieName, categorywanted) == 0)
             {
               printAllRecipyOfACategory (pointer);
@@ -217,7 +221,7 @@ printAllRecipyOfACategory (category_t * theCategory)
     {
       while (pointeur != NULL)
         {
-          fprintf (stdout, "%s", pointeur->recipyName);
+          fprintf (stdout, "%s\n", pointeur->recipyName);
           pointeur = pointeur->next;
         }
     }
@@ -258,13 +262,15 @@ int releaseRecipyAllocation(recette_t **headOfRecipy)
     {
       if((*headOfRecipy)->next == NULL) 
         {
-          printf("recette libere = %s", (*headOfRecipy)->recipyName);
+          printf("(if)recette libere = %s\n", (*headOfRecipy)->recipyName);
+          free((*headOfRecipy)->recipyName);
           free(*headOfRecipy);
         }
       else
         {
           releaseRecipyAllocation (&(*headOfRecipy)->next);
-          printf("recette libere = %s", (*headOfRecipy)->recipyName);
+          printf("(else)ecette libere = %s\n", (*headOfRecipy)->recipyName);
+          free((*headOfRecipy)->recipyName);
           free(*headOfRecipy);
         }
     }
@@ -283,14 +289,14 @@ int releaseCategoryAllocation(category_t ** headOfCategory)
       if((*headOfCategory)->next == NULL) 
         {
           releaseRecipyAllocation (&(*headOfCategory)->recette_t);
-          printf("category libere = %s", (*headOfCategory)->categorieName);
+          printf("(if)category libere = %s\n", (*headOfCategory)->categorieName);
           free(*headOfCategory);
         }
       else
         {
           releaseCategoryAllocation (&(*headOfCategory)->next);
           releaseRecipyAllocation (&(*headOfCategory)->recette_t);
-          printf("category libere = %s", (*headOfCategory)->categorieName);
+          printf("(else)category libere = %s\n", (*headOfCategory)->categorieName);
           free(*headOfCategory);
         }
     }

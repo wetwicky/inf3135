@@ -43,7 +43,11 @@ int insertInRecipyList (recette_t **recipyToAdd, category_t **categoryOfRecipy);
 int
 createNewRecipy (recette_t **pointerForRecipy, char* nomRecette)
 {
-  *pointerForRecipy = (recette_t *) malloc (sizeof (recette_t));
+  printf("char* nomRecette = %s", nomRecette);
+  char* test = nomRecette;
+  int taille = sizeof (recette_t);
+  *pointerForRecipy = (recette_t *) malloc (strlen (nomRecette) + 1);
+  printf("char* nomRecette = %s", nomRecette);
   (*pointerForRecipy)->next = NULL;
   assert (pointerForRecipy != NULL && "Erreur d'allocation de memoire");
   (*pointerForRecipy)->recipyName = (char*) malloc (sizeof (nomRecette));
@@ -57,7 +61,7 @@ createNewCategory (category_t **pointerForCategory, recette_t **pointerForRecipy
 {
   *pointerForCategory = (category_t *) malloc (sizeof (category_t));
   assert (pointerForCategory != NULL && "Erreur d'allocation de memoire");
-  (*pointerForCategory)->categorieName = (char*) malloc (sizeof (strlen (nomCategory) + 1));
+  (*pointerForCategory)->categorieName = (char*) malloc (strlen (nomCategory) + 1);
   assert (pointerForCategory != NULL && "Erreur d'allocation de memoire");
   strcpy ((*pointerForCategory)->categorieName, nomCategory);
   (*pointerForCategory)->recette_t = *pointerForRecipy;

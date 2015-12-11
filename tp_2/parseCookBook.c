@@ -34,7 +34,6 @@ parsingAllInformation (category_t** headOfCategory, FILE* dataBank)
   char lineBuffer[120] = {0};
   char *nomRecette = NULL;
   char *nomCategory = NULL;
-  char* test = NULL;
   while (!feof (dataBank))
     {      
       if (fgets (lineBuffer, 120, dataBank) != NULL)

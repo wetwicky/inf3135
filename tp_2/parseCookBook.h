@@ -45,6 +45,5 @@ void insertNewValue(category_t** headOfCategory, recette_t** recipyToAdd, catego
  */
 void parsingAllInformation (category_t** headOfCategory, FILE* dataBank);
 
-
 #endif /* PARSECOOKBOOK_H */
 

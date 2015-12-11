@@ -4,17 +4,23 @@
 #include "arrlist.h"
 #include "trim.h"
 
-void obtainFirstTokens(char* lineBuffer, char** nomRecette, char** nomCategory){
+void
+obtainFirstTokens (char* lineBuffer, char** nomRecette, char** nomCategory)
+{
   *nomRecette = strtok (lineBuffer, "[");
-  trim(lineBuffer);
+  trim (lineBuffer);
   *nomCategory = strtok (NULL, "[]");
 }
 
-void obtainNextCategoryToken(char** nomCategory){
+void
+obtainNextCategoryToken (char** nomCategory)
+{
   *nomCategory = strtok (NULL, "[]");
 }
 
-void insertNewValue(category_t** headOfCategory, recette_t** recipyToAdd, category_t** categoryToAdd, char* nomRecette, char* nomCategory){
+void
+insertNewValue (category_t** headOfCategory, recette_t** recipyToAdd, category_t** categoryToAdd, char* nomRecette, char* nomCategory)
+{
   createNewRecipy (recipyToAdd, nomRecette);
   createNewCategory (categoryToAdd, recipyToAdd, nomCategory);
   insertInCategoryList (headOfCategory, categoryToAdd);
@@ -28,17 +34,20 @@ parsingAllInformation (category_t** headOfCategory, FILE* dataBank)
   char lineBuffer[120] = {0};
   char *nomRecette = NULL;
   char *nomCategory = NULL;
+  char* test = NULL;
   while (!feof (dataBank))
-    {
-      fgets (lineBuffer, 120, dataBank);
-      obtainFirstTokens(lineBuffer, &nomRecette, &nomCategory);
-      insertNewValue(headOfCategory, &recipyToAdd, &categoryToAdd, nomRecette, nomCategory);
-      while (nomCategory != NULL)
+    {      
+      if (fgets (lineBuffer, 120, dataBank) != NULL)
         {
-          obtainNextCategoryToken(&nomCategory);
-          if (!(nomCategory == NULL || strcmp (nomCategory, " ") == 0 || strcmp (nomCategory, "\r\n") == 0))
+          obtainFirstTokens (lineBuffer, &nomRecette, &nomCategory);
+          insertNewValue (headOfCategory, &recipyToAdd, &categoryToAdd, nomRecette, nomCategory);
+          while (nomCategory != NULL)
             {
-              insertNewValue(headOfCategory, &recipyToAdd, &categoryToAdd, nomRecette, nomCategory);
+              obtainNextCategoryToken (&nomCategory);
+              if (!(nomCategory == NULL || strcmp (nomCategory, " ") == 0 || strcmp (nomCategory, "\r\n") == 0))
+                {
+                  insertNewValue (headOfCategory, &recipyToAdd, &categoryToAdd, nomRecette, nomCategory);
+                }
             }
         }
     }

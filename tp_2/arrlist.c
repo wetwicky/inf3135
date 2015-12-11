@@ -305,7 +305,7 @@ selectRecipyByKeyWordInACategory (category_t* headOfCategory, char* keyWord)
       loopInRecipyPointer (keyWord, &finded, &pointeur);
       if (finded == FAUX)
         {
-          printf ("Catégorie inexistante.\n");
+          printf ("Recherche invalide.\n");
         }
     }
   return EXIT_SUCCESS;

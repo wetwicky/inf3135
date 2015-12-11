@@ -11,7 +11,7 @@
 int validationNombreDeParametre (int nombreDeParametre, char* fichierExecution);
 
 /*
- * make sure the name of the string is valid and open acces to the file.
+ * make sure the name of the string is valid and open access to the file.
  * 
  * @param:  FILE **fichierAOuvrir
  *          char* cheminFichier

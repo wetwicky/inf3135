@@ -17,26 +17,43 @@
 #include <string.h>
 #include "arrlist.h"
 #include "parameter.h"
+#include "trim.h"
+
+void obtainFirstTokens(char* lineBuffer, char** nomRecette, char** nomCategory){
+  *nomRecette = strtok (lineBuffer, "[");
+  trim(lineBuffer);
+  *nomCategory = strtok (NULL, "[]");
+}
+
+void obtainNextCategoryToken(char** nomCategory){
+  *nomCategory = strtok (NULL, "[]");
+}
+
+void insertNewValue(category_t** headOfCategory, recette_t** recipyToAdd, category_t** categoryToAdd, char* nomRecette, char* nomCategory){
+  createNewRecipy (recipyToAdd, nomRecette);
+  createNewCategory (categoryToAdd, recipyToAdd, nomCategory);
+  insertInCategoryList (headOfCategory, categoryToAdd);
+}
 
 void
-parsingInformation (char* lineBuffer, char** nomRecette, char** nomCategory, category_t** categoryToAdd, recette_t** recipyToAdd, category_t** headOfCategory, FILE* dataBank)
+parsingAllInformation (category_t** headOfCategory, FILE* dataBank)
 {
+  recette_t *recipyToAdd = NULL;
+  category_t *categoryToAdd = NULL;
+  char lineBuffer[120] = {0};
+  char *nomRecette = NULL;
+  char *nomCategory = NULL;
   while (!feof (dataBank))
     {
       fgets (lineBuffer, 120, dataBank);
-      (*nomRecette) = strtok (lineBuffer, "[");
-      createNewRecipy (&(*recipyToAdd), (*nomRecette));
-      (*nomCategory) = strtok (NULL, "[]");
-      createNewCategory (&(*categoryToAdd), &(*recipyToAdd), (*nomCategory));
-      insertInCategoryList (&(*headOfCategory), &(*categoryToAdd));
-      while ((*nomCategory) != NULL)
+      obtainFirstTokens(lineBuffer, &nomRecette, &nomCategory);
+      insertNewValue(headOfCategory, &recipyToAdd, &categoryToAdd, nomRecette, nomCategory);
+      while (nomCategory != NULL)
         {
-          (*nomCategory) = strtok (NULL, "[]");
-          if (!((*nomCategory) == NULL || strcmp ((*nomCategory), " ") == 0 || strcmp ((*nomCategory), "\r\n") == 0))
+          obtainNextCategoryToken(&nomCategory);
+          if (!(nomCategory == NULL || strcmp (nomCategory, " ") == 0 || strcmp (nomCategory, "\r\n") == 0))
             {
-              createNewRecipy (&(*recipyToAdd), (*nomRecette));
-              createNewCategory (&(*categoryToAdd), &(*recipyToAdd), (*nomCategory));
-              insertInCategoryList (&(*headOfCategory), &(*categoryToAdd));
+              insertNewValue(headOfCategory, &recipyToAdd, &categoryToAdd, nomRecette, nomCategory);
             }
         }
     }
@@ -45,17 +62,12 @@ parsingInformation (char* lineBuffer, char** nomRecette, char** nomCategory, cat
 int
 main (int argc, char** argv)
 {
-  char lineBuffer[120] = {0};
-  char *nomRecette = NULL;
-  char *nomCategory = NULL;
-  category_t *categoryToAdd = NULL;
-  recette_t *recipyToAdd = NULL;
-  category_t *headOfCategory = NULL;
   FILE *dataBank = NULL;
-
+  category_t *headOfCategory = NULL;
+  
   validationNombreDeParametre (argc, argv[0]);
   ouvertureFichier (&dataBank, argv[1], "r");
-  parsingInformation (lineBuffer, &nomRecette, &nomCategory, &categoryToAdd, &recipyToAdd, &headOfCategory, dataBank);
+  parsingAllInformation (&headOfCategory, dataBank);
   research (headOfCategory);
   releaseCategoryAllocation (&headOfCategory);
   fclose (dataBank);

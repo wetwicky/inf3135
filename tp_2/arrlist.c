@@ -43,11 +43,7 @@ int insertInRecipyList (recette_t **recipyToAdd, category_t **categoryOfRecipy);
 int
 createNewRecipy (recette_t **pointerForRecipy, char* nomRecette)
 {
-  printf("char* nomRecette = %s", nomRecette);
-  char* test = nomRecette;
-  int taille = sizeof (recette_t);
   *pointerForRecipy = (recette_t *) malloc (strlen (nomRecette) + 1);
-  printf("char* nomRecette = %s", nomRecette);
   (*pointerForRecipy)->next = NULL;
   assert (pointerForRecipy != NULL && "Erreur d'allocation de memoire");
   (*pointerForRecipy)->recipyName = (char*) malloc (sizeof (nomRecette));
@@ -59,7 +55,7 @@ createNewRecipy (recette_t **pointerForRecipy, char* nomRecette)
 int
 createNewCategory (category_t **pointerForCategory, recette_t **pointerForRecipy, char* nomCategory)
 {
-  *pointerForCategory = (category_t *) malloc (sizeof (category_t));
+  *pointerForCategory = (category_t *) malloc (sizeof (category_t) + strlen (nomCategory) + 1);
   assert (pointerForCategory != NULL && "Erreur d'allocation de memoire");
   (*pointerForCategory)->categorieName = (char*) malloc (strlen (nomCategory) + 1);
   assert (pointerForCategory != NULL && "Erreur d'allocation de memoire");
@@ -385,7 +381,10 @@ selectResearchMode (category_t* headOfCategory, category_t** returnedCategory, c
   if (rechercheKeyWord == NULL)
     {
       findCategory (headOfCategory, rechercheCategory, returnedCategory);
+      if(*returnedCategory != NULL)
+        {
       printAllRecipyOfACategory (*returnedCategory);
+        }
     }
   else
     {
@@ -400,6 +399,7 @@ doResearch (category_t* headOfCategory, char* recherche, category_t** returnedCa
   char *rechercheCategory = NULL;
   char *rechercheKeyWord = NULL;
   char *rechercheOtherWord = NULL;
+  *returnedCategory = NULL;
   if (recherche == NULL)
     {
       fprintf (stderr, "La valeur de recherche n'est pas valide.\n");
